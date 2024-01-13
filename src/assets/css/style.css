@@ -1,0 +1,65 @@
+body,
+html {
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+
+/*=============================================
+Estilos generales de la aplicacion 
+==============================================*/
+.as-box-shadow {
+    border-radius: 5px;
+    box-shadow: 0px 6px 17px 0px rgba(0, 0, 0);
+}
+
+.as-box-shadow-elevated {
+    border-radius: 5px;
+    box-shadow: 0px 6px 17px 0px rgba(0, 0, 0);
+    position: relative;
+    top: 20px;
+    z-index: 9999999999999;
+    width: 90%;
+    margin: 0px auto;
+}
+
+.as-content-app {
+    margin: 50px 50px;
+}
+@media only screen and (max-width: 900px) {
+    .as-content-app {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .as-content-app {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
+
+/* scroll */
+*::-webkit-scrollbar {
+    width: 9px !important;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #999999;
+    border-radius: 10px;
+}
+*::-webkit-slider-thumb:hover {
+    background-color: #666666;
+}
+*::-webkit-scrollbar-track {
+    background-color: #dddddd;
+}
+/* navigation -sidebar- top bar */
+/* .as-navigation {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url(@/assets/images/navigation-drawer.jpg) !important;
+    background-size: cover !important;
+    background-repeat: none !important;
+} */
+
