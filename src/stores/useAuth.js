@@ -12,7 +12,6 @@ export const useAuth = defineStore('idUseAuth', () => {
     const init = () => {
         if (localStorage.getItem('sessionAuth') == null || localStorage.getItem('sessionAuth') == undefined) {
             localStorage.setItem('sessionAuth', JSON.stringify(auth.value));
-            console.log("Creando sessionAuth por primera vez")
         }
     }
     init();
@@ -38,9 +37,9 @@ export const useAuth = defineStore('idUseAuth', () => {
             if (resolve.data.status == true) {
                 setAuth({
                     state: true,
-                    access_token: resolve.data,
+                    access_token: resolve.data.access_token,
                     time_expiration_token: Date.now() + Number(resolve.data.expires_in * 60) * 1000,//convertimos de minutos, segundos a milisegundos 
-                });
+                })
             }
 
             return resolve.data;
@@ -98,14 +97,13 @@ export const useAuth = defineStore('idUseAuth', () => {
 
     const checkExpirationToken = () => {
         if (getAuth().state && Date.now() >= getAuth().time_expiration_token) {
-            this.setAuth({
-                enable: false,
+            setAuth({
+                state: false,
                 access_token: "",
                 time_expiration_token: 0,
             });
         }
     }
-
     return { getAuth, login, user, hasRole, updateCredentials, logout, checkExpirationToken }
 });
 

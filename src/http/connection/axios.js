@@ -9,12 +9,9 @@ const instance = axios.create({
 instance.interceptors.request.use((config) => {
     const use_auth = useAuth();
     if (use_auth.getAuth().state) {
-        const token = use_auth.getAuth().access_token;
-        config.headers['Authorization'] = `Bearer ${token}`;
+        config.headers['Authorization'] = `Bearer ${use_auth.getAuth().access_token}`;
     }
-
     return config;
-
 });
 
 export default instance;

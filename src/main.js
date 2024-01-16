@@ -17,7 +17,7 @@ const pinia = createPinia();
 loadFonts();
 
 createApp(App)
-.use(pinia)
+  .use(pinia)
   .use(router)
   .use(vuetify)
   .mount('#app');

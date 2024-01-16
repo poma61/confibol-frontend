@@ -27,6 +27,7 @@ Estilos generales de la aplicacion
 .as-content-app {
     margin: 50px 50px;
 }
+
 @media only screen and (max-width: 900px) {
     .as-content-app {
         margin-left: 20px;
@@ -45,21 +46,25 @@ Estilos generales de la aplicacion
 *::-webkit-scrollbar {
     width: 9px !important;
 }
+
 *::-webkit-scrollbar-thumb {
     background-color: #999999;
     border-radius: 10px;
 }
+
 *::-webkit-slider-thumb:hover {
     background-color: #666666;
 }
+
 *::-webkit-scrollbar-track {
     background-color: #dddddd;
 }
+
 /* navigation -sidebar- top bar */
-/* .as-navigation {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+.as-navigation-drawer {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
         url(@/assets/images/navigation-drawer.jpg) !important;
     background-size: cover !important;
     background-repeat: none !important;
-} */
-
+    color: white !important;
+}

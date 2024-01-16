@@ -1,6 +1,6 @@
 <template>
     <main class="as-content">
-        <div class="animate__animated animate__jackInTheBox ma-5  as-login-card">
+        <div class="animate__animated animate__rollIn ma-5  as-login-card">
             <img class="as-card-item" :src="require('@/assets/images/logo-empresa.jpeg')" />
 
             <v-form @submit.prevent="login" class="pa-5 as-card-item">
@@ -34,7 +34,7 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
 import toastify from '@/composables/toastify';
 //data
-const user = ref("");  
+const user = ref("");
 const password = ref("");
 const loading = ref(false);
 const router = useRouter();
@@ -46,14 +46,13 @@ const login = () => {
     setTimeout(async () => {
         const auth = useAuth();
         const auth_success = await auth.login(user.value, password.value)
+        loading.value = false;
         if (auth_success.status) {
             router.push("/inicio");
-           // toastify('info', auth_success.message);
+            toastify('info', auth_success.message);
         } else {
             toastify('danger', auth_success.message);
         }
-        loading.value = false;
-
     }, 200);
 }
 </script>
