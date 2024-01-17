@@ -48,7 +48,7 @@ const login = () => {
         const auth_success = await auth.login(user.value, password.value)
         loading.value = false;
         if (auth_success.status) {
-            router.push("/inicio");
+            router.push({ name: 'n-inicio' });
             toastify('info', auth_success.message);
         } else {
             toastify('danger', auth_success.message);

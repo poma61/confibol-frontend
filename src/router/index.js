@@ -74,6 +74,33 @@ const routes = [
       middleware(authenticate),
     ],
   },
+  {
+    path: '/deposito/:ciudad',
+    name: 'n-deposito',
+    component: () => import(/* webpackChunkName: "DepositoView" */'@/views/DepositoView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ],
+  },
+
+  {
+    path: '/compra/:ciudad',
+    name: 'n-compra',
+    component: () => import(/* webpackChunkName: "CompraView" */'@/views/CompraView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ],
+  },
 
 ];//routes
 

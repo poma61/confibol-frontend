@@ -19,8 +19,15 @@
 
                 <v-divider class="border-opacity-25 my-2"></v-divider>
                 <p class="text-subtitle-1 font-weight-bold">ALMACEN</p>
-                <v-list-item prepend-icon="mdi-cart-outline" title="Compras" value="Compras" :to="{name:'n-compra'}"/>
-                <v-list-item prepend-icon="mdi-store" title="Depositos" value="Depositos" />
+                
+                <v-list-item prepend-icon="mdi-cart-outline" title="Compras" value="Compras"
+                    :to="{ name: 'n-compra', params: { ciudad: 'la-paz' } }"
+                    :class="{ 'v-list-item--active': route.name == 'n-compra' }" />
+
+                <v-list-item prepend-icon="mdi-store" title="Depositos" value="Depositos"
+                    :to="{ name: 'n-deposito', params: { ciudad: 'la-paz' } }"
+                    :class="{ 'v-list-item--active': route.name == 'n-deposito' }" />
+
                 <v-list-item prepend-icon="mdi-package-variant" title="Productos" value="Productos" />
                 <v-list-item prepend-icon="mdi-file-table-box-outline" title="Categorias" value="Categorias" />
 
@@ -29,7 +36,7 @@
                 <v-list-item prepend-icon="mdi mdi-account-group" title="Personal" value="Personal" />
                 <v-list-item prepend-icon="mdi mdi-account" title="Usuarios" value="Usuarios" />
 
-            </v-list> 
+            </v-list>
         </v-navigation-drawer>
 
         <AppBar @openByCloseNavigationDrawerEmit="openByCloseNavigationDrawer" :p_user="user" />
@@ -40,11 +47,13 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router';
 import AppBar from '@/layouts/AppBar.vue';
 import { ref, onMounted } from 'vue';
 import { useAuth } from '@/stores/useAuth';
 import toastify from '@/composables/toastify';
 import app from '@/config/app';
+const route = useRoute();
 
 //data
 const drawer = ref(true);
