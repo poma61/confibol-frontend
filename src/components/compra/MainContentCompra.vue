@@ -61,7 +61,7 @@
 
     <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
         <FormDeposito :is_ciudad="ciudad" :is_item_compra="item_compra" :is_item_documento_compra="item_documento_compra"
-            @toCloseForm="closeForm" @toLocalUpdateDataTable="localUpdateDataTable"  @toHandleElement="handleElement"/>
+            @toCloseForm="closeForm" @toLocalUpdateDataTable="localUpdateDataTable" @toHandleElement="handleElement" />
     </v-dialog>
 
 
@@ -166,14 +166,26 @@ const closeForm = () => {
 }
 
 const confirmDeleteData = async () => {
-    const compra = new Compra(ciudad.value, Object.assign({}, item_compra.value));
-    const response = await compra.destroy();
-    if (response.status) {
-        data.value.splice(index_data_item.value, 1);
-        toastify('success', response.message);
-    } else {
-        toastify('danger', response.message)
-    }
+    const compra = new Compra(ciudad.value);
+
+    compra.setAttributes({
+        compra: {
+            id: 10,
+            nota: "",
+        },
+        documento_compra: {
+            id_compra: "78",
+        },
+    });
+    console.log(compra.getAttributes());
+
+    // const response = await compra.destroy();
+    // if (response.status) {
+    //     data.value.splice(index_data_item.value, 1);
+    //     toastify('success', response.message);
+    // } else {
+    //     toastify('danger', response.message)
+    // }
     closeDeleteData();
 }
 

@@ -8,7 +8,7 @@ import toastify from '@/composables/toastify';
 //soloe esta hecho los metodos getters y setters
 
 class Producto {
-    constructor(compra, categoria, producto, deposito, producto_lote) {
+    constructor(compra, categoria, deposito, producto, producto_lote) {
         this.producto_lote = {
             id: 0,
             fecha_vencimiento: "",
@@ -61,20 +61,16 @@ class Producto {
             switch (type) {
                 case "producto":
                     resolve = await axios.post('/producto/all-data', {
-                        id_compra: this.compra.getAttributes().id,
+                        id_categoria: this.categoria.getAttributes().id,
                     }, this.config);
 
                     return resolve.data;
-
                 case "lote-producto":
                     resolve = await axios.post('/lote-producto/all-data', {
                         id_compra: this.compra.getAttributes().id,
-
                     }, this.config);
 
                     return resolve.data;
-
-
                 default: toastify("warning", "Error en el metodo index.")
                     return {};
             }
@@ -84,12 +80,28 @@ class Producto {
         }
     }//index
 
-    async store() {
+    async store(type) {
+        let resolve;
         try {
-            const resolve = await axios.post('/producto-lote/new-data', {
-                ...this.getAttributes(),
-                id_compra: this.compra.getAttributes().id,
-            }, this.config);
+
+            switch (type) {
+                case "producto":
+                    resolve = await axios.post('/producto/new-data', {
+                        ...this.getAttributes(),
+                        id_categoria: this.categoria.getAttributes().id,
+                    }, this.config);
+
+                case "lote-producto":
+                    resolve = await axios.post('/lote-producto/new-data', {
+                        ...this.getAttributes(),
+                        id_compra: this.compra.getAttributes().id,
+                    }, this.config);
+
+                default:
+                    toastify("warning", "Error en el metodo store.")
+                    return {};
+            }
+
             return resolve.data;
 
         } catch (error) {
