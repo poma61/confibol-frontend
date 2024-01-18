@@ -4,8 +4,8 @@
         <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-yellow-darken-3 as-box-shadow">
             <v-icon icon="mdi-cart"></v-icon>&nbsp;Compra
         </h1>
-        <v-card class="animate__animated animate__bounceInRight">
-            <v-tabs bg-color="light-blue-darken-3" stacked show-arrows color="light-blue-accent-1">
+        <v-card class="mt-5">
+            <v-tabs class="animate__animated animate__bounceInRight" bg-color="light-blue-darken-3" stacked show-arrows color="light-blue-accent-1">
                 <v-tab :to="{ name: 'n-compra', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
                     La Paz
@@ -74,5 +74,5 @@ watch(() => route.params.ciudad, async (new_ciudad) => {
 onMounted(async () => {
     tableCompraComponent.value.witchParamsRoute(route.params.ciudad);
     await tableCompraComponent.value.loadDataTable();
-});
+});            
 </script>

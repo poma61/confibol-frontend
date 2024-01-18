@@ -1,11 +1,10 @@
 import axios from '@/http/connection/axios';
-// este archivo aun no esta hecho nada, solo las variables generales estanb actualizado
-class ProductoLote {
-    constructor(ciudad, producto_lote) {
-        this.producto_lote = {
+//verificar este archivo 
+class Categoria {
+    constructor(ciudad, categoria) {
+        this.categoria = {
             id: 0,
             nombres: "",
-            direccion: "",
         };
         this.ciudad = ciudad;
         this.config = {
@@ -14,29 +13,28 @@ class ProductoLote {
                 'Content-Type': 'application/json'
             }
         }
-        if (producto_lote != undefined) {
-            this.setAttributes(producto_lote);
+        if (categoria != undefined) {
+            this.setAttributes(categoria);
         }
     }
 
-    setAttributes(producto_lote) {
-        Object.entries(this.producto_lote).forEach(([key]) => {
-            if (Object.prototype.hasOwnProperty.call(producto_lote, key)) {
-                this.producto_lote[key] = producto_lote[key];
+    setAttributes(categoria) {
+        Object.entries(this.categoria).forEach(([key]) => {
+            if (Object.prototype.hasOwnProperty.call(categoria, key)) {
+                this.categoria[key] = categoria[key];
             }
         });
     }
 
     getAttributes() {
-        return this.producto_lote;
+        return this.categoria;
     }
 
     async index() {
         try {
-            const resolve = await axios.post('/producto-lote/all-data', {
+            const resolve = await axios.post('/categoria/all-data', {
                 ciudad: this.ciudad,
             }, this.config);
-
             return resolve.data;
         } catch (error) {
             return error.response.data;
@@ -45,9 +43,9 @@ class ProductoLote {
 
     async store() {
         try {
-            const resolve = await axios.post('/producto-lote/new-data', {
+            const resolve = await axios.post('/categoria/new-data', {
                 ciudad: this.ciudad,
-                ...this.getAttributes()
+                ...this.getAttributes(),
             }, this.config);
             return resolve.data;
 
@@ -60,7 +58,7 @@ class ProductoLote {
     async update() {
         this.config.headers['X-HTTP-Method-Override'] = 'PUT';
         try {
-            const resolve = await axios.post('/producto-lote/edit-data', {
+            const resolve = await axios.post('/categoria/edit-data', {
                 ciudad: this.ciudad,
                 ...this.getAttributes(),
             }, this.config);
@@ -75,7 +73,7 @@ class ProductoLote {
 
     async destroy() {
         try {
-            const resolve = await axios.post('/producto-lote/delete-data', {
+            const resolve = await axios.post('/categoria/delete-data', {
                 ciudad: this.ciudad,
                 id: this.getAttributes().id,
             }, this.config);
@@ -87,6 +85,4 @@ class ProductoLote {
     }//destroy
 
 }//class
-
-export default ProductoLote;
-
+export default Categoria;

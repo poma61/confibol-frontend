@@ -5,8 +5,8 @@
         <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-teal-accent-4 as-box-shadow">
             <v-icon icon="mdi-store"></v-icon>&nbsp;Depositos
         </h1>
-        <v-card class="animate__animated animate__bounceInRight">
-            <v-tabs bg-color="cyan-darken-1"  stacked show-arrows color="light-blue-darken-4">
+        <v-card class="animate__animated animate__bounceInRight mt-5" >
+            <v-tabs bg-color="cyan-darken-1"  stacked show-arrows color="light-blue-darken-4"  >
                 <v-tab :to="{ name: 'n-deposito', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
                     La Paz
@@ -51,9 +51,7 @@
                     <v-icon icon="mdi-numeric-9-circle-outline" />
                     Oruro
                 </v-tab>
-
             </v-tabs>
-
             <MainContentDeposito ref="tableDepositoComponent" />
         </v-card>
     </MainApp>

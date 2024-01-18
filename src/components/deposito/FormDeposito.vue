@@ -1,7 +1,7 @@
 <template>
-    <v-card>
-        <v-card-title class="animate__animated animate__bounceInRight bg-teal-accent-4">
-            <span class="text-h6">Registrar deposito</span>
+    <v-card class="animate__animated animate__slideInDown" elevation="24">
+        <v-card-title class="bg-teal-accent-4">
+            <v-icon icon="mdi-store"></v-icon>&nbsp;<span class="text-h6">Registrar deposito</span>
         </v-card-title>
         <v-card-text class="pa-3">
             <p class="text-warning text-subtitle-1">Los campos marcados con (*) son obligatorios.</p>
@@ -21,7 +21,6 @@
         </v-card-text>
 
         <v-card-actions>
-
             <v-spacer></v-spacer>
             <v-btn color="red" variant="elevated" @click="emit('toCloseForm')">
                 <v-icon icon="mdi-close-circle"></v-icon>&nbsp;Cancelar

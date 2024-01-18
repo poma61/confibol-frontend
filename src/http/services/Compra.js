@@ -1,12 +1,24 @@
 import axios from '@/http/connection/axios';
+import toastify from '@/composables/toastify';
 
 class Compra {
-    constructor(ciudad, compra, producto_lote) {
+    constructor(ciudad, compra, documento_compra) {
         this.compra = {
             id: 0,
-            nombres: "",
-            direccion: "",
+            nota: "",
+            fecha_compra: "",
         };
+
+        this.documento_compra = {
+            tipo_compra: "",
+            recibo: "",
+            factura: "",
+            lista_empaque: "",
+            poliza: "",
+            factura_importacion: "",
+            id_compra: "",
+        };
+
         this.ciudad = ciudad;
         this.config = {
             headers: {
@@ -15,20 +27,56 @@ class Compra {
             }
         }
         if (compra != undefined) {
-            this.setAttributes(compra);
+            this.setAttributes("compra", compra);
         }
+
+        if (documento_compra != undefined) {
+            this.setAttributes("documento-compra", documento_compra);
+        }
+
     }
 
-    setAttributes(compra) {
-        Object.entries(this.compra).forEach(([key]) => {
-            if (Object.prototype.hasOwnProperty.call(compra, key)) {
-                this.compra[key] = compra[key];
-            }
-        });
+    setCiudad(ciudad) {
+        this.ciudad = ciudad;
     }
 
-    getAttributes() {
-        return this.compra;
+    getCiudad() {
+        return this.ciudad;
+    }
+
+    setAttributes(type, items) {
+        switch (type) {
+            case "compra":
+                Object.entries(this.compra).forEach(([key]) => {
+                    if (Object.prototype.hasOwnProperty.call(items, key)) {
+                        this.compra[key] = items[key];
+                    }
+                });
+                break;
+            case "documento-compra":
+                Object.entries(this.documento_compra).forEach(([key]) => {
+                    if (Object.prototype.hasOwnProperty.call(items, key)) {
+                        this.documento_compra[key] = items[key];
+                    }
+                });
+                break;
+            default:
+                toastify('warning', "El metodo setAttributes de la clase Compra no pudo obtener ningun tipo.")
+                break;
+        }//switch
+    }
+
+    getAttributes(type) {
+        switch (type) {
+            case "compra":
+                return this.compra;
+            case "documento-compra":
+                return this.documento_compra;
+            default:
+                toastify('warning', "El metodo setAttributes de la clase Compra no pudo obtener ningun tipo.")
+                return {};
+        }//switch
+
     }
 
     async index() {
@@ -47,7 +95,8 @@ class Compra {
         try {
             const resolve = await axios.post('/compra/new-data', {
                 ciudad: this.ciudad,
-                ...this.getAttributes()
+                compra: this.getAttributes("compra"),
+                documento_compra: this.getAttributes("documento-compra"),
             }, this.config);
             return resolve.data;
 
@@ -62,22 +111,21 @@ class Compra {
         try {
             const resolve = await axios.post('/compra/edit-data', {
                 ciudad: this.ciudad,
-                ...this.getAttributes(),
+                compra: this.getAttributes("compra"),
+                documento_compra: this.getAttributes("documento-compra"),
             }, this.config);
             return resolve.data;
-
         } catch (error) {
             return error.response.data;
 
         }
-
     }//update
 
     async destroy() {
         try {
             const resolve = await axios.post('/compra/delete-data', {
                 ciudad: this.ciudad,
-                id: this.getAttributes().id,
+                id: this.getAttributes("compra").id,
             }, this.config);
             return resolve.data;
 

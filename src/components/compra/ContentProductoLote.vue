@@ -1,69 +1,80 @@
+
 <template>
-    <div v-if="element_show.compra_data_table" class="animate__animated animate__fadeInUpBig">
-        <div class="d-flex flex-wrap mt-2">
-            <v-btn color="deep-purple-lighten-1" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
-                <v-icon icon="mdi-refresh"></v-icon>&nbsp;Actualizar
+    <div class="animate__animated animate__fadeInUpBig">
+        <div class="d-flex flex-warp mt-2">
+            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1"
+                @click="emit('toHandleElement', 'compra-data-table', null)" rounded>
+                <v-icon icon="mdi-table"></v-icon>&nbsp;principal
             </v-btn>
 
-            <v-btn color="deep-purple-lighten-1" variant="elevated" class="ma-1" @click="newForm()" rounded>
-                <v-icon icon="mdi-plus"></v-icon>&nbsp;Nuevo registro
+            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="clear()" rounded>
+                <v-icon icon="mdi-delete-sweep"></v-icon>
+            </v-btn>
+
+            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
+                <v-icon icon="mdi-refresh"></v-icon>
             </v-btn>
         </div>
+        <v-card class="mt-1 flex-grow-1" elevation="10">
 
-        <v-card class="my-2 flex-grow-1">
+            <v-card-title class="bg-secondary">
+                <v-icon icon="mdi-text-box"></v-icon>&nbsp;<span class="text-h6">Kardex</span>
+            </v-card-title>
             <v-card-text>
+                <div class="ma-5 d-flex justify-center align-center">
+                    <v-table density="compact" class="is-width-responsive">
+                        <tbody>
+                            <tr>
+                                <td colspan="2" class="text-center text-h6 text-primary">Datos generales de la compra</td>
+                            </tr>
+                            <tr>
+                                <th class="text-secondary">Fecha de compra:</th>
+                                <td>{{ format_date.dateOnlyFormatter(props.is_compra.fecha_compra) }}</td>
+                            </tr>
+
+                            <tr>
+                                <th class="text-secondary">Tipo de compra:</th>
+                                <td>{{ props.is_compra.tipo_compra }}</td>
+                            </tr>
+
+                            <tr>
+                                <th class="text-secondary">Nota:</th>
+                                <td v-if="props.is_compra.nota == null" class="text-warning">Sin nota!</td>
+                                <td v-else>{{ props.is_compra.nota }}</td>
+                            </tr>
+
+                        </tbody>
+                    </v-table>
+                </div>
                 <v-text-field v-model="search_data" append-inner-icon="mdi-magnify" clearable label="Buscar Registros..."
-                    color="deep-purple-lighten-1" />
-                <v-data-table :hover="true" :items="data" :headers="columns" :search="search_data"
+                    color="amber-darken-4" />
+                <v-data-table class="my-3" :hover="true" :items="data" :headers="columns" :search="search_data"
                     :loading="loading_data_table" :items-per-page-options="items_per_page_options" :show-current-page="true"
-                    :fixed-header="true" :height="550" :sort-by="[{ key: 'id', order: 'desc' }]">
+                    :fixed-header="true" :height="500" :sort-by="[{ key: 'id', order: 'desc' }]">
 
                     <template v-slot:loading>
                         <v-skeleton-loader type="table-row@13"></v-skeleton-loader>
                     </template>
 
-                    <template v-slot:item.fecha_compra="{ item }">
-                        <v-chip color="secondary">
-                            {{ format_date.dateOnlyFormatter(item.fecha_compra) }}
+                    <template v-slot:item.details="{ item }">
+                        <v-btn icon="mdi-text-box" @click="showItem(item)" color="success" class="ma-1" />
+                    </template>
+
+                    <template v-slot:item.monto="{ item }">
+                        <v-chip color="orange-darken-4">
+                            $us {{ item.monto.toFixed(2) }}
                         </v-chip>
                     </template>
-
-                    <template v-slot:item.add_product_lote="{ item }">
-                        <v-btn @click="handleElement('product-lot', item)" class="ma-1" color="cyan-darken-1"
-                            variant="elevated" rounded>
-                            <v-icon icon="mdi-text-box-plus"></v-icon>
-                        </v-btn>
-                    </template>
-
-                    <template v-slot:item.nota="{ item }">
-                        <p class="text-warning" v-if="item.nota == null">Sin nota!</p>
-                        <p v-else> {{ item.nota }}</p>
-                    </template>
-
-                    <template v-slot:item.actions="{ item }">
-                        <div style="min-width: 150px;">
-                            <v-btn @click="editForm(item)" class="ma-1" color="deep-purple-lighten-1" variant="elevated"
-                                rounded>
-                                <v-icon icon="mdi-pencil"></v-icon>
-                            </v-btn>
-                            <v-btn @click="openDeleteData(item)" class="ma-1" color="red" variant="elevated" rounded>
-                                <v-icon icon="mdi-delete"></v-icon>
-                            </v-btn>
-                        </div>
-                    </template>
-
                 </v-data-table>
+
             </v-card-text>
         </v-card>
     </div>
 
-    <ContentProductoLote v-if="element_show.product_lot" :is_compra="item_compra" @toHandleElement="handleElement" />
-
     <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
-        <FormDeposito :is_ciudad="ciudad" :is_item_compra="item_compra" :is_item_documento_compra="item_documento_compra"
-            @toCloseForm="closeForm" @toLocalUpdateDataTable="localUpdateDataTable"  @toHandleElement="handleElement"/>
+        <FormDeposito :is_compra="props.is_compra" :is_item_producto_lote="item_producto_lote" @toCloseForm="closeForm"
+            @toLocalUpdateDataTable="localUpdateDataTable" />
     </v-dialog>
-
 
     <v-dialog v-model="dialog_delete" persistent max-width="500px">
         <v-card class="animate__animated animate__flipInX pa-5" elevation="24">
@@ -92,25 +103,23 @@
 <script setup>
 import FormDeposito from '@/components/compra/FormCompra.vue';
 import Compra from '@/http/services/Compra';
-import { ref, defineExpose } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 import toastify from '@/composables/toastify';
 import FormatDateDyl from '@/util/FormatDateDyl';
-import ContentProductoLote from '@/components/compra/ContentProductoLote.vue';
+
+//props y emits
+const props = defineProps(['is_compra']);
+const emit = defineEmits(['toHandleElement']);
 
 //data
 const index_data_item = ref(-1);
 const dialog_delete = ref(false);
 const dialog_form = ref(false);
 const item_compra = ref({});
-const item_documento_compra = ref({});
+const item_producto_lote = ref({});
 const search_data = ref("");
 const loading_data_table = ref(null);
-const ciudad = ref("");
 const format_date = new FormatDateDyl();
-const element_show = ref({
-    compra_data_table: false,
-    product_lot: false,
-})
 
 const items_per_page_options = ref([
     { value: 10, title: '10' },
@@ -129,8 +138,7 @@ const data = ref([]);
 //methods
 
 const loadDataTable = () => {
-    handleElement("compra-data-table", null);
-    const compra = new Compra(ciudad.value);
+    const compra = new Compra();
     loading_data_table.value = 'deep-purple-lighten-1 ';
     setTimeout(async () => {
         const response = await compra.index();
@@ -146,7 +154,7 @@ const loadDataTable = () => {
 
 const clear = () => {
     item_compra.value = {};
-    item_documento_compra.value = {};
+    item_producto_lote.value = {};
     index_data_item.value = -1;
 }
 
@@ -166,7 +174,7 @@ const closeForm = () => {
 }
 
 const confirmDeleteData = async () => {
-    const compra = new Compra(ciudad.value, Object.assign({}, item_compra.value));
+    const compra = new Compra(Object.assign({}, item_compra.value));
     const response = await compra.destroy();
     if (response.status) {
         data.value.splice(index_data_item.value, 1);
@@ -180,7 +188,7 @@ const confirmDeleteData = async () => {
 const newForm = () => {
     const compra = new Compra();
     item_compra.value = Object.assign({}, compra.getAttributes("compra"));
-    item_documento_compra.value = Object.assign({}, compra.getAttributes("documento-compra"));
+    item_producto_lote.value = Object.assign({}, compra.getAttributes("documento-compra"));
     dialog_form.value = true;
 }
 
@@ -189,7 +197,7 @@ const editForm = (item) => {
     compra.setAttributes("compra", item);
     compra.setAttributes("documento-compra", item);
     item_compra.value = Object.assign({}, compra.getAttributes("compra"));
-    item_documento_compra.value = Object.assign({}, compra.getAttributes("documento-compra"));
+    item_producto_lote.value = Object.assign({}, compra.getAttributes("documento-compra"));
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
 }
@@ -203,35 +211,10 @@ const localUpdateDataTable = (type, item) => {
             Object.assign(data.value[index_data_item.value], item);
             break;
         default:
-            toastify('danger', 'Error en el metodo localUpdateDataTable.');
+            toastify('danger', 'No se puede reconocer la accion al registrar.');
             break;
     }
 }
 
-const witchParamsRoute = (item) => {
-    ciudad.value = item;
-}
-
-const handleElement = (element, item) => {
-    switch (element) {
-        case "compra-data-table":
-            element_show.value.compra_data_table = true;
-            element_show.value.product_lot = false;
-            break;
-        case "product-lot":
-            item_compra.value = Object.assign({}, item);
-            element_show.value.compra_data_table = false;
-            element_show.value.product_lot = true;
-            break;
-        default: toastify("warning", "Error en el metodo handleElement.");
-            break;
-    }//switch
-}
-
-//mantenemos visible la funcion 
-defineExpose({
-    loadDataTable,
-    witchParamsRoute,
-});
 
 </script>

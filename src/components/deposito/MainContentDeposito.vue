@@ -41,15 +41,15 @@
             </v-data-table>
         </v-card>
 
-        <v-dialog v-model="dialog_form" persistent transition="dialog-bottom-transition" max-width="900px" scrollable>
+        <v-dialog v-model="dialog_form" persistent  max-width="900px" scrollable>
             <FormDeposito :is_ciudad="ciudad" :is_item_deposito="item_deposito" @toCloseForm="closeForm"
                 @toUpdateDataTable="updateDataTable" />
         </v-dialog>
 
     </div>
 
-    <v-dialog v-model="dialog_delete" persistent transition="dialog-bottom-transition" max-width="500px">
-        <v-card class="px-5 py-5">
+    <v-dialog v-model="dialog_delete" persistent max-width="500px">
+        <v-card class="animate__animated animate__slideInDown pa-5"  elevation="24">
             <v-card-text class="text-center">
                 <v-icon icon="mdi-trash-can-outline" size="100" color="red"
                     class="animate__animated animate__infinite animate__bounce"></v-icon>
