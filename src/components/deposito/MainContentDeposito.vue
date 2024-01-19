@@ -96,7 +96,7 @@ const items_per_page_options = ref([
 ]);
 
 const columns = ref([
-    { title: 'Nombres', key: 'nombres', },
+    { title: 'Nombre deposito', key: 'nombre_deposito', },
     { title: 'Direccion', key: 'direccion', },
     { title: 'Acciones', key: 'actions', },
 ]);

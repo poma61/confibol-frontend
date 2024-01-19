@@ -35,8 +35,9 @@
                 </v-col>
 
                 <v-col cols="12" sm="6">
-                    <v-text-field v-model="item_compra.documento_compra.factura" label="Factura"
-                        color="deep-purple-lighten-1" clearable variant="outlined" />
+                    <v-text-field v-model="item_compra.documento_compra.factura_nacional" label="Factura nacional"
+                        color="deep-purple-lighten-1" clearable variant="outlined" 
+                        :error-messages="showFieldsErrors('documento_compra.factura_nacional')"/>
                 </v-col>
             </v-row>
 
@@ -54,7 +55,8 @@
 
                 <v-col cols="12" sm="4">
                     <v-text-field v-model="item_compra.documento_compra.factura_importacion" label="Factura de importacion"
-                        color="deep-purple-lighten-1" clearable variant="outlined" />
+                        color="deep-purple-lighten-1" clearable variant="outlined" 
+                        :error-messages="showFieldsErrors('documento_compra.factura_importacion')"/>
                 </v-col>
             </v-row>
 

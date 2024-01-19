@@ -21,7 +21,8 @@
                 </v-col>
 
                 <v-col cols="12">
-                    <v-autocomplete chips label="Depositos" :items="list_deposito.map(item => item.label)" ></v-autocomplete>
+                    <v-autocomplete chips label="Depositos" :items="list_deposito.map(item => item.label)"
+                        @update:model-value="assingByIdDespito($event)" />
                 </v-col>
 
             </v-row>
@@ -122,7 +123,7 @@ const initListDeposito = async () => {
 
 const initListProducto = async () => {
     const producto = new Producto();
-    const response = await producto.index();
+    const response = await producto.list();
 
     if (response.status) {
         const list = response.records;
@@ -132,7 +133,14 @@ const initListProducto = async () => {
     }
 }
 
-
+const assingByIdDespito = (item) => {
+     list_deposito.value.forEach(element => {
+        if(element.label==item){
+            item_lote_producto.value.id_deposito=element.id;
+            console.log("ok");
+        }
+     });       
+};  
 
 onMounted(async () => {
     await initListDeposito();

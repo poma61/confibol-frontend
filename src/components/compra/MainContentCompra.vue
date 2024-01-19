@@ -158,7 +158,7 @@ const openDeleteData = (item) => {
         documento_compra: {
             tipo_compra: item.tipo_compra,
             recibo: item.recibo,
-            factura: item.factura,
+            factura_nacional: item.factura_nacional,
             lista_empaque: item.lista_empaque,
             poliza: item.poliza,
             factura_importacion: item.factura_importacion,
@@ -209,7 +209,7 @@ const editForm = (item) => {
         documento_compra: {
             tipo_compra: item.tipo_compra,
             recibo: item.recibo,
-            factura: item.factura,
+            factura_nacional: item.factura_nacional,
             lista_empaque: item.lista_empaque,
             poliza: item.poliza,
             factura_importacion: item.factura_importacion,
@@ -256,7 +256,7 @@ const handleElement = (element, item) => {
                 documento_compra: {
                     tipo_compra: item.tipo_compra,
                     recibo: item.recibo,
-                    factura: item.factura,
+                    factura_nacional: item.factura_nacional,
                     lista_empaque: item.lista_empaque,
                     poliza: item.poliza,
                     factura_importacion: item.factura_importacion,

@@ -10,7 +10,7 @@ class Producto extends Service {
         super();
         this.setFillable({
             id: 0,
-            nombres: "",
+            nombre_producto: "",
             imagen: "",
         });
         this.setApi({

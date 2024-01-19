@@ -9,8 +9,8 @@
                 <!-- sm => es cuando en modo responsivo se aplica desde 600px aproximadamente-->
                 <!-- md=> es cuando en modo responsivo se aplica desde 800px aproximadamente   -->
                 <v-col cols="12">
-                    <v-text-field v-model="item_deposito.nombres" label="Nombres (*)" color="teal-accent-4" clearable
-                        :error-messages="showFieldsErrors('nombres')" variant="outlined" />
+                    <v-text-field v-model="item_deposito.nombre_deposito" label="Nombre deposito (*)" color="teal-accent-4" clearable
+                        :error-messages="showFieldsErrors('nombre_deposito')" variant="outlined" />
                 </v-col>
 
                 <v-col cols="12">

@@ -13,7 +13,7 @@ class Compra extends Service {
             documento_compra: {
                 tipo_compra: "",
                 recibo: "",
-                factura: "",
+                factura_nacional: "",
                 lista_empaque: "",
                 poliza: "",
                 factura_importacion: "",

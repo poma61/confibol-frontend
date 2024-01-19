@@ -7,7 +7,7 @@ class Deposito extends Service {
         super();
         this.setFillable({
             id: 0,
-            nombres: "",
+            nombre_deposito: "",
             direccion: "",
         });
 

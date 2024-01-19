@@ -158,12 +158,12 @@ const items_per_page_options = ref([
 ]);
 
 const columns = ref([
-    { title: 'Producto', key: 'nombres_producto' },
+    { title: 'Producto', key: 'nombre_producto' },
     { title: 'Fecha de vencimiento', key: 'fecha_vencimiento' },
     { title: 'Detalle', key: 'detalle' },
     { title: 'Cantidad', key: 'cantidad' },
     { title: 'Costo unitario', key: 'costo_unitario' },
-    { title: 'Deposito', key: 'nombres_deposito' },
+    { title: 'Deposito', key: 'nombre_deposito' },
     { title: 'Acciones', key: 'actions' },
 ]);
 const data = ref([]);
@@ -171,12 +171,7 @@ const data = ref([]);
 
 const loadDataTable = () => {
     const lote_producto = new LoteProducto();
-    lote_producto.setCompra({
-        compra: {
-            id: props.is_compra.compra.id,
-        },
-        documento_compra: {}
-    });
+    lote_producto.setParameter({id_compra: props.is_compra.compra.id});
 
     loading_data_table.value = 'deep-purple-lighten-1';
     setTimeout(async () => {
@@ -227,14 +222,12 @@ const confirmDeleteData = async () => {
 const newForm = () => {
     const lote_producto = new LoteProducto();
     item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
-    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     dialog_form.value = true;
 }
 
 const editForm = (item) => {
     const lote_producto = new LoteProducto();
     lote_producto.setAttributes(item);
-    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
