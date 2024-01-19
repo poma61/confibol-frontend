@@ -1,8 +1,8 @@
 
 import Service from '@/http/services/Service';
 
-class Compra extends Service{
-    constructor(ciudad, compra_by_documento_comp) {
+class Compra extends Service {
+    constructor(ciudad, by_compra) {
         super();
         this.setFillable({
             compra: {
@@ -29,15 +29,14 @@ class Compra extends Service{
         });
 
         this.ciudad = ciudad;
-        if (compra_by_documento_comp != undefined) {
-            this.setAttributes(compra_by_documento_comp);
+        if (by_compra != undefined) {
+            this.setAttributes(by_compra);
         }
 
         this.setParameter({
             ciudad: this.ciudad,
         });
     }
-
 
 }//class
 export default Compra;

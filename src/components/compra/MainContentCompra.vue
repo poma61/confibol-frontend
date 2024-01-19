@@ -60,8 +60,8 @@
     <ContentProductoLote v-if="element_show.product_lot" :is_compra="item_compra" @toHandleElement="handleElement" />
 
     <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
-        <FormDeposito :is_ciudad="ciudad" :is_item_compra="item_compra" :is_item_documento_compra="item_documento_compra"
-            @toCloseForm="closeForm" @toLocalUpdateDataTable="localUpdateDataTable" @toHandleElement="handleElement" />
+        <FormDeposito :is_ciudad="ciudad" :is_item_compra="item_compra" @toCloseForm="closeForm"
+            @toLocalUpdateDataTable="localUpdateDataTable" @toHandleElement="handleElement" />
     </v-dialog>
 
 
@@ -102,7 +102,6 @@ const index_data_item = ref(-1);
 const dialog_delete = ref(false);
 const dialog_form = ref(false);
 const item_compra = ref({});
-const item_documento_compra = ref({});
 const search_data = ref("");
 const loading_data_table = ref(null);
 const ciudad = ref("");
@@ -146,12 +145,26 @@ const loadDataTable = () => {
 
 const clear = () => {
     item_compra.value = {};
-    item_documento_compra.value = {};
     index_data_item.value = -1;
 }
 
 const openDeleteData = (item) => {
-    item_compra.value = Object.assign({}, item);
+    item_compra.value = {
+        compra: {
+            id: item.id,
+            nota: item.nota,
+            fecha_compra: item.fecha_compra,
+        },
+        documento_compra: {
+            tipo_compra: item.tipo_compra,
+            recibo: item.recibo,
+            factura: item.factura,
+            lista_empaque: item.lista_empaque,
+            poliza: item.poliza,
+            factura_importacion: item.factura_importacion,
+            id_compra: item.id_compra,
+        },
+    };
     index_data_item.value = data.value.indexOf(item);
     dialog_delete.value = true;
 }
@@ -167,41 +180,44 @@ const closeForm = () => {
 
 const confirmDeleteData = async () => {
     const compra = new Compra(ciudad.value);
+    compra.setAttributes(item_compra.value);
 
-    compra.setAttributes({
-        compra: {
-            id: 10,
-            nota: "",
-        },
-        documento_compra: {
-            id_compra: "78",
-        },
-    });
-    console.log(compra.getAttributes());
-
-    // const response = await compra.destroy();
-    // if (response.status) {
-    //     data.value.splice(index_data_item.value, 1);
-    //     toastify('success', response.message);
-    // } else {
-    //     toastify('danger', response.message)
-    // }
+    const response = await compra.destroy();
+    if (response.status) {
+        data.value.splice(index_data_item.value, 1);
+        toastify('success', response.message);
+    } else {
+        toastify('danger', response.message)
+    }
     closeDeleteData();
 }
 
 const newForm = () => {
     const compra = new Compra();
-    item_compra.value = Object.assign({}, compra.getAttributes("compra"));
-    item_documento_compra.value = Object.assign({}, compra.getAttributes("documento-compra"));
+    item_compra.value = Object.assign({}, compra.getAttributes());
     dialog_form.value = true;
 }
 
 const editForm = (item) => {
     const compra = new Compra();
-    compra.setAttributes("compra", item);
-    compra.setAttributes("documento-compra", item);
-    item_compra.value = Object.assign({}, compra.getAttributes("compra"));
-    item_documento_compra.value = Object.assign({}, compra.getAttributes("documento-compra"));
+    compra.setAttributes({
+        compra: {
+            id: item.id,
+            nota: item.nota,
+            fecha_compra: item.fecha_compra,
+        },
+        documento_compra: {
+            tipo_compra: item.tipo_compra,
+            recibo: item.recibo,
+            factura: item.factura,
+            lista_empaque: item.lista_empaque,
+            poliza: item.poliza,
+            factura_importacion: item.factura_importacion,
+            id_compra: item.id_compra,
+        },
+    });
+
+    item_compra.value = Object.assign({}, compra.getAttributes());
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
 }
@@ -231,7 +247,22 @@ const handleElement = (element, item) => {
             element_show.value.product_lot = false;
             break;
         case "product-lot":
-            item_compra.value = Object.assign({}, item);
+            item_compra.value = {
+                compra: {
+                    id: item.id,
+                    nota: item.nota,
+                    fecha_compra: item.fecha_compra,
+                },
+                documento_compra: {
+                    tipo_compra: item.tipo_compra,
+                    recibo: item.recibo,
+                    factura: item.factura,
+                    lista_empaque: item.lista_empaque,
+                    poliza: item.poliza,
+                    factura_importacion: item.factura_importacion,
+                    id_compra: item.id_compra,
+                },
+            }
             element_show.value.compra_data_table = false;
             element_show.value.product_lot = true;
             break;

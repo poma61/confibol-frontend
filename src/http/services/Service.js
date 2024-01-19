@@ -4,7 +4,7 @@ class Service {
     constructor() {
         this.fillable = {};
         this.parameter = {};
-        this.attribute = { ...this.fillable };
+        this.attributes = { ...this.fillable };
         this.config = {
             headers: {
                 'Assept': 'application/json',
@@ -26,10 +26,10 @@ class Service {
             //atributo=> es un objeto.. entonces e sun objeto anidado
             if (Object.values(source).every(value => typeof value == 'object')) {
                 //si es un objeto anidado cuando su atributo es de tipo objet
-                for (const key in this.attribute) {
-                    if (Object.prototype.hasOwnProperty.call(this.attribute, key) && source[key] != undefined) {
+                for (const key in this.attributes) {
+                    if (Object.prototype.hasOwnProperty.call(this.attributes, key) && source[key] != undefined) {
                         // funcion recursiva  
-                        this.attribute[key] = this.setAttributes(this.attribute[key], source[key]);
+                        this.attributes[key] = this.setAttributes(this.attributes[key], source[key]);
                     }
                 }
             } else {
@@ -48,9 +48,9 @@ class Service {
                 } else {
                     //solo un parametro no se ejecuta de forma recursiva
                     let source = args[0];
-                    for (const key in this.attribute) {
-                        if (Object.prototype.hasOwnProperty.call(this.attribute, key) && source[key] != undefined) {
-                            this.attribute[key] = source[key];
+                    for (const key in this.attributes) {
+                        if (Object.prototype.hasOwnProperty.call(this.attributes, key) && source[key] != undefined) {
+                            this.attributes[key] = source[key];
                         }
                     }
                 }
@@ -72,7 +72,7 @@ class Service {
     }
 
     getAttributes() {
-        return this.attribute;
+        return this.attributes;
     }
 
     async index() {
@@ -184,7 +184,7 @@ class Service {
 
     setFillable(fillable) {
         this.fillable = fillable;
-        this.attribute = { ...this.fillable };
+        this.attributes = { ...this.fillable };
     }
 
     getFillable() {

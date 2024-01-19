@@ -2,9 +2,14 @@
 <template>
     <div class="animate__animated animate__fadeInUpBig">
         <div class="d-flex flex-warp mt-2">
+
             <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1"
                 @click="emit('toHandleElement', 'compra-data-table', null)" rounded>
                 <v-icon icon="mdi-table"></v-icon>&nbsp;principal
+            </v-btn>
+
+            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="newForm()" rounded>
+                <v-icon icon="mdi-plus"></v-icon>&nbsp;nuevo lote producto
             </v-btn>
 
             <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="clear()" rounded>
@@ -14,6 +19,7 @@
             <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
                 <v-icon icon="mdi-refresh"></v-icon>
             </v-btn>
+
         </div>
         <v-card class="mt-1 flex-grow-1" elevation="10">
 
@@ -25,22 +31,23 @@
                     <v-table density="compact" class="is-width-responsive">
                         <tbody>
                             <tr>
-                                <td colspan="2" class="text-center text-h6 text-primary">Datos generales de la compra</td>
+                                <td colspan="2" class="text-center text-h6 text-primary">Datos generales de la compra
+                                </td>
                             </tr>
                             <tr>
                                 <th class="text-secondary">Fecha de compra:</th>
-                                <td>{{ format_date.dateOnlyFormatter(props.is_compra.fecha_compra) }}</td>
+                                <td>{{ format_date.dateOnlyFormatter(props.is_compra.compra.fecha_compra) }}</td>
                             </tr>
 
                             <tr>
-                                <th class="text-secondary">Tipo de compra:</th>
-                                <td>{{ props.is_compra.tipo_compra }}</td>
+                                <th class="text-secondary">Tipo de lote_producto:</th>
+                                <td>{{ props.is_compra.documento_compra.tipo_compra }}</td>
                             </tr>
 
                             <tr>
                                 <th class="text-secondary">Nota:</th>
-                                <td v-if="props.is_compra.nota == null" class="text-warning">Sin nota!</td>
-                                <td v-else>{{ props.is_compra.nota }}</td>
+                                <td v-if="props.is_compra.compra.nota == null" class="text-warning">Sin nota!</td>
+                                <td v-else>{{ props.is_compra.compra.nota }}</td>
                             </tr>
 
                         </tbody>
@@ -60,11 +67,35 @@
                         <v-btn icon="mdi-text-box" @click="showItem(item)" color="success" class="ma-1" />
                     </template>
 
-                    <template v-slot:item.monto="{ item }">
+                    <template v-slot:item.costo_unitario="{ item }">
                         <v-chip color="orange-darken-4">
-                            $us {{ item.monto.toFixed(2) }}
+                            Bs. {{ item.costo_unitario.toFixed(2) }}
                         </v-chip>
                     </template>
+
+                    <template v-slot:item.detalle="{ item }">
+                        <p class="text-warning" v-if="item.detalle == null || item.detalle == ''">Sin detalle!</p>
+                        <p v-else>{{ item.detalle }}</p>
+                    </template>
+
+                    <template v-slot:item.fecha_vencimiento="{ item }">
+                        <v-chip color="success">
+                            {{ format_date.dateOnlyFormatter(item.fecha_vencimiento) }}
+                        </v-chip>
+                    </template>
+
+                    <template v-slot:item.actions="{ item }">
+                        <div style="min-width: 150px;">
+                            <v-btn @click="editForm(item)" class="ma-1" color="success" variant="elevated"
+                                rounded>
+                                <v-icon icon="mdi-pencil"></v-icon>
+                            </v-btn>
+                            <v-btn @click="openDeleteData(item)" class="ma-1" color="red" variant="elevated" rounded>
+                                <v-icon icon="mdi-delete"></v-icon>
+                            </v-btn>
+                        </div>
+                    </template>
+
                 </v-data-table>
 
             </v-card-text>
@@ -72,7 +103,7 @@
     </div>
 
     <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
-        <FormDeposito :is_compra="props.is_compra" :is_item_producto_lote="item_producto_lote" @toCloseForm="closeForm"
+        <FormLoteProducto :is_compra="props.is_compra" :is_item_lote_producto="item_lote_producto" @toCloseForm="closeForm"
             @toLocalUpdateDataTable="localUpdateDataTable" />
     </v-dialog>
 
@@ -101,9 +132,9 @@
 </template>
 
 <script setup>
-import FormDeposito from '@/components/compra/FormCompra.vue';
-import Compra from '@/http/services/Compra';
-import { ref, defineProps, defineEmits } from 'vue';
+import FormLoteProducto from '@/components/compra/FormLoteProducto.vue';
+import LoteProducto from '@/http/services/LoteProducto';
+import { ref, defineProps, defineEmits, onMounted } from 'vue';
 import toastify from '@/composables/toastify';
 import FormatDateDyl from '@/util/FormatDateDyl';
 
@@ -115,8 +146,7 @@ const emit = defineEmits(['toHandleElement']);
 const index_data_item = ref(-1);
 const dialog_delete = ref(false);
 const dialog_form = ref(false);
-const item_compra = ref({});
-const item_producto_lote = ref({});
+const item_lote_producto = ref({});
 const search_data = ref("");
 const loading_data_table = ref(null);
 const format_date = new FormatDateDyl();
@@ -128,20 +158,29 @@ const items_per_page_options = ref([
 ]);
 
 const columns = ref([
-    { title: 'Fecha de compra', key: 'fecha_compra' },
-    { title: 'Tipo de compra', key: 'tipo_compra' },
-    { title: 'Nota', key: 'nota' },
-    { title: 'Producto lote', key: 'add_product_lote' },
+    { title: 'Producto', key: 'nombres_producto' },
+    { title: 'Fecha de vencimiento', key: 'fecha_vencimiento' },
+    { title: 'Detalle', key: 'detalle' },
+    { title: 'Cantidad', key: 'cantidad' },
+    { title: 'Costo unitario', key: 'costo_unitario' },
+    { title: 'Deposito', key: 'nombres_deposito' },
     { title: 'Acciones', key: 'actions' },
 ]);
 const data = ref([]);
 //methods
 
 const loadDataTable = () => {
-    const compra = new Compra();
-    loading_data_table.value = 'deep-purple-lighten-1 ';
+    const lote_producto = new LoteProducto();
+    lote_producto.setCompra({
+        compra: {
+            id: props.is_compra.compra.id,
+        },
+        documento_compra: {}
+    });
+
+    loading_data_table.value = 'deep-purple-lighten-1';
     setTimeout(async () => {
-        const response = await compra.index();
+        const response = await lote_producto.index();
         loading_data_table.value = null;
         if (response.status) {
             data.value = response.records;
@@ -153,13 +192,12 @@ const loadDataTable = () => {
 }//loadDataTable
 
 const clear = () => {
-    item_compra.value = {};
-    item_producto_lote.value = {};
+    item_lote_producto.value = {};
     index_data_item.value = -1;
 }
 
 const openDeleteData = (item) => {
-    item_compra.value = Object.assign({}, item);
+    item_lote_producto.value = Object.assign({}, item);
     index_data_item.value = data.value.indexOf(item);
     dialog_delete.value = true;
 }
@@ -174,8 +212,9 @@ const closeForm = () => {
 }
 
 const confirmDeleteData = async () => {
-    const compra = new Compra(Object.assign({}, item_compra.value));
-    const response = await compra.destroy();
+    const lote_producto = new LoteProducto(Object.assign({}, item_lote_producto.value));
+
+    const response = await lote_producto.destroy();
     if (response.status) {
         data.value.splice(index_data_item.value, 1);
         toastify('success', response.message);
@@ -186,18 +225,17 @@ const confirmDeleteData = async () => {
 }
 
 const newForm = () => {
-    const compra = new Compra();
-    item_compra.value = Object.assign({}, compra.getAttributes("compra"));
-    item_producto_lote.value = Object.assign({}, compra.getAttributes("documento-compra"));
+    const lote_producto = new LoteProducto();
+    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
+    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     dialog_form.value = true;
 }
 
 const editForm = (item) => {
-    const compra = new Compra();
-    compra.setAttributes("compra", item);
-    compra.setAttributes("documento-compra", item);
-    item_compra.value = Object.assign({}, compra.getAttributes("compra"));
-    item_producto_lote.value = Object.assign({}, compra.getAttributes("documento-compra"));
+    const lote_producto = new LoteProducto();
+    lote_producto.setAttributes(item);
+    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
+    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
 }
@@ -216,5 +254,8 @@ const localUpdateDataTable = (type, item) => {
     }
 }
 
+onMounted(() => {
+    loadDataTable();
+});
 
 </script>

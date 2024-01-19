@@ -10,17 +10,17 @@
                 <!-- sm => es cuando en modo responsivo se aplica desde 600px aproximadamente-->
                 <!-- md=> es cuando en modo responsivo se aplica desde 800px aproximadamente   -->
                 <v-col cols="12">
-                    <v-text-field v-model="item_compra.fecha_compra" label="Fecha compra (*)" color="deep-purple-lighten-1"
-                        clearable :error-messages="showFieldsErrors('compra.fecha_compra')" variant="outlined"
-                        type="date" />
+                    <v-text-field v-model="item_compra.compra.fecha_compra" label="Fecha compra (*)"
+                        color="deep-purple-lighten-1" clearable :error-messages="showFieldsErrors('compra.fecha_compra')"
+                        variant="outlined" type="date" />
                 </v-col>
 
                 <v-col cols="12">
-                    <v-textarea v-model="item_compra.nota" label="Nota" color="deep-purple-lighten-1" clearable
+                    <v-textarea v-model="item_compra.compra.nota" label="Nota" color="deep-purple-lighten-1" clearable
                         variant="outlined" rows="3" />
                 </v-col>
 
-                <v-radio-group label="Tipo de compra" inline v-model="item_documento_compra.tipo_compra"
+                <v-radio-group label="Tipo de compra" inline v-model="item_compra.documento_compra.tipo_compra"
                     :error-messages="showFieldsErrors('documento_compra.tipo_compra')">
                     <v-radio label="Nacional" value="Nacional" color="secondary"></v-radio>
                     <v-radio label="Importacion" value="Importacion" color="secondary"></v-radio>
@@ -28,32 +28,32 @@
             </v-row>
             <!-- form para documentos compras -->
             <!--  cuando es compra nacional -->
-            <v-row v-if="item_documento_compra.tipo_compra == 'Nacional'">
+            <v-row v-if="item_compra.documento_compra.tipo_compra == 'Nacional'">
                 <v-col cols="12" sm="6">
-                    <v-text-field v-model="item_documento_compra.recibo" label="Recibo" color="deep-purple-lighten-1"
+                    <v-text-field v-model="item_compra.documento_compra.recibo" label="Recibo" color="deep-purple-lighten-1"
                         clearable variant="outlined" />
                 </v-col>
 
                 <v-col cols="12" sm="6">
-                    <v-text-field v-model="item_documento_compra.factura" label="Factura" color="deep-purple-lighten-1"
-                        clearable variant="outlined" />
+                    <v-text-field v-model="item_compra.documento_compra.factura" label="Factura"
+                        color="deep-purple-lighten-1" clearable variant="outlined" />
                 </v-col>
             </v-row>
 
             <!--  cuando es compra de importacion -->
-            <v-row v-if="item_documento_compra.tipo_compra == 'Importacion'">
+            <v-row v-if="item_compra.documento_compra.tipo_compra == 'Importacion'">
                 <v-col cols="12" sm="4">
-                    <v-text-field v-model="item_documento_compra.lista_empaque" label="Lista de empaque"
+                    <v-text-field v-model="item_compra.documento_compra.lista_empaque" label="Lista de empaque"
                         color="deep-purple-lighten-1" clearable variant="outlined" />
                 </v-col>
 
                 <v-col cols="12" sm="4">
-                    <v-text-field v-model="item_documento_compra.poliza" label="Poliza" color="deep-purple-lighten-1"
+                    <v-text-field v-model="item_compra.documento_compra.poliza" label="Poliza" color="deep-purple-lighten-1"
                         clearable variant="outlined" />
                 </v-col>
 
                 <v-col cols="12" sm="4">
-                    <v-text-field v-model="item_documento_compra.factura_importacion" label="Factura de importacion"
+                    <v-text-field v-model="item_compra.documento_compra.factura_importacion" label="Factura de importacion"
                         color="deep-purple-lighten-1" clearable variant="outlined" />
                 </v-col>
             </v-row>
@@ -80,13 +80,12 @@ import Compra from '@/http/services/Compra';
 import toastify from '@/composables/toastify';
 
 //etmis y props
-const props = defineProps(['is_item_compra', 'is_ciudad', 'is_item_documento_compra']);
-const emit = defineEmits(['toCloseForm', 'toLocalUpdateDataTable','toHandleElement']);
+const props = defineProps(['is_item_compra', 'is_ciudad']);
+const emit = defineEmits(['toCloseForm', 'toLocalUpdateDataTable', 'toHandleElement']);
 
 //data
 const fields_errors = ref({});
 const item_compra = ref(props.is_item_compra);
-const item_documento_compra = ref(props.is_item_documento_compra);
 const loading_btn = ref(false);
 
 const showFieldsErrors = computed(() => {
@@ -101,8 +100,8 @@ const showFieldsErrors = computed(() => {
 const save = () => {
     loading_btn.value = true;
     setTimeout(async () => {
-        const compra = new Compra(props.is_ciudad, Object.assign({}, item_compra.value), Object.assign({}, item_documento_compra.value));
-        if (compra.getAttributes("compra").id > 0) {
+        const compra = new Compra(props.is_ciudad, Object.assign({}, item_compra.value));
+        if (compra.getAttributes().compra.id > 0) {
             //cuando es update
             const response = await compra.update();
             loading_btn.value = false;

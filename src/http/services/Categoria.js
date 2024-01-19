@@ -2,7 +2,7 @@
 import Service from '@/http/services/Service';
 //verificar este archivo 
 class Categoria extends Service {
-    constructor(ciudad, deposito) {
+    constructor(ciudad, categoria) {
         super();
         this.setFillable({
             id: 0,
@@ -18,8 +18,8 @@ class Categoria extends Service {
         });
 
         this.ciudad = ciudad;
-        if (deposito != undefined) {
-            this.setAttributes(deposito);
+        if (Service != undefined) {
+            this.setAttributes(Service);
         }
 
         this.setParameter({

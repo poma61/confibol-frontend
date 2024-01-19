@@ -1,187 +1,41 @@
-import axios from '@/http/connection/axios';
-import Compra from '@/http/services/Compra';
-import Categoria from '@/http/services/Categoria';
-import Producto from '@/http/services/Producto';
-import Deposito from '@/http/services/Deposito';
-import toastify from '@/composables/toastify';
-//verificar esta clase no esta hecho los metodos index...
-//soloe esta hecho los metodos getters y setters
 
-class Producto {
-    constructor(compra, categoria, deposito, producto, producto_lote) {
-        this.producto_lote = {
-            id: 0,
-            fecha_vencimiento: "",
-            detalle: "",
-            cantidad: "",
-            costo_unitario: "",
-        };
-        this.producto = {
+import Service from '@/http/services/Service';
+import Categoria from '@/http/services/Categoria';
+import axios from '@/http/connection/axios';
+
+
+//verificar esta clase
+class Producto extends Service {
+    constructor() {
+        super();
+        this.setFillable({
             id: 0,
             nombres: "",
             imagen: "",
-            id_categoria: "",
-        };
-        this.compra = new Compra();
-        this.categoria = new Categoria();
-        this.producto = new Producto();
-        this.deposito = new Deposito();
-        this.config = {
-            headers: {
-                'Assept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }
-
-        if (compra != undefined) {
-            this.setCompra(compra);
-        }
-
-        if (categoria != undefined) {
-            this.setCategoria(categoria);
-        }
-
-        if (producto != undefined) {
-            this.setProducto(producto);
-        }
-
-        if (deposito != undefined) {
-            this.setDeposito(deposito);
-        }
-
-        if (producto_lote != undefined) {
-            this.setAttributes(producto_lote);
-        }
-
-    }
-
-    async index(type) {
-        try {
-            let resolve;
-            switch (type) {
-                case "producto":
-                    resolve = await axios.post('/producto/all-data', {
-                        id_categoria: this.categoria.getAttributes().id,
-                    }, this.config);
-
-                    return resolve.data;
-                case "lote-producto":
-                    resolve = await axios.post('/lote-producto/all-data', {
-                        id_compra: this.compra.getAttributes().id,
-                    }, this.config);
-
-                    return resolve.data;
-                default: toastify("warning", "Error en el metodo index.")
-                    return {};
-            }
-
-        } catch (error) {
-            return error.response.data;
-        }
-    }//index
-
-    async store(type) {
-        let resolve;
-        try {
-
-            switch (type) {
-                case "producto":
-                    resolve = await axios.post('/producto/new-data', {
-                        ...this.getAttributes(),
-                        id_categoria: this.categoria.getAttributes().id,
-                    }, this.config);
-
-                case "lote-producto":
-                    resolve = await axios.post('/lote-producto/new-data', {
-                        ...this.getAttributes(),
-                        id_compra: this.compra.getAttributes().id,
-                    }, this.config);
-
-                default:
-                    toastify("warning", "Error en el metodo store.")
-                    return {};
-            }
-
-            return resolve.data;
-
-        } catch (error) {
-
-            return error.response.data;
-        }
-    }//create
-
-    async update() {
-        this.config.headers['X-HTTP-Method-Override'] = 'PUT';
-        try {
-            const resolve = await axios.post('/producto-lote/edit-data', {
-                ...this.getAttributes(),
-                id_compra: this.compra.getAttributes().id,
-            }, this.config);
-            return resolve.data;
-        } catch (error) {
-            return error.response.data;
-
-        }
-    }//update
-
-    async destroy() {
-        try {
-            const resolve = await axios.post('/producto_lote/delete-data', {
-                id: this.getAttributes().id,
-            }, this.config);
-            return resolve.data;
-
-        } catch (error) {
-            return error.response.data;
-        }
-    }//destroy
-
-
-    setCompra(compra) {
-        this.compra.setAttributes("compra", compra)
-    }
-
-    getCompra() {
-        return this.compra.getAttributes("compra");
-    }
-
-    setCategoria(categoria) {
-        this.categoria.setAttributes(categoria)
-    }
-
-    getCategoria() {
-        return this.categoria.getAttributes();
-    }
-
-    setProducto(producto) {
-        this.producto.setAttributes(producto)
-    }
-
-    getProducto() {
-        return this.producto.getAttributes();
-    }
-
-    setDeposito(deposito) {
-        this.deposito.setAttributes(deposito)
-    }
-
-    getDeposito() {
-        return this.deposito.getAttributes();
-    }
-
-    setAttributes(producto_lote) {
-        Object.entries(this.producto_lote).forEach(([key]) => {
-            if (Object.prototype.hasOwnProperty.call(producto_lote, key)) {
-                this.producto_lote[key] = producto_lote[key];
-            }
         });
-    }
+        this.setApi({
+            index: { url: "/producto/all-data", method: "post" },
+            store: { url: "/producto/new-data", method: "post" },
+            update: { url: "/producto/edit-data", method: "put" },
+            destroy: { url: "/producto/delete-data", method: "post" },
+        });
+        this.categoria = new Categoria();
+    }//constructor
 
-    getAttributes() {
-        return this.producto_lote;
+    async list() {
+        try {
+            const resolve = await axios.post("/producto/listar", this.config);
+            return resolve.data;
+
+        } catch (error) {
+            if (error.response == undefined || error.response.data == undefined) {
+                console.error(error);
+                return { status: false, message: error + "" };
+            }
+            return error.response.data;
+        }
     }
 
 }//class
-
 export default Producto;
 
