@@ -1,20 +1,19 @@
 import Service from '@/http/services/Service';
 
-//verificar esta clase no esta hecho los metodos index...
-//soloe esta hecho los metodos getters y setters
-
 class LoteProducto extends Service {
     constructor(lote_producto) {
         super();
         this.setFillable({
             id: 0,
             fecha_vencimiento: "",
-            detalle: "",
-            cantidad: "",
+            descripcion: "",
             costo_unitario: "",
+            cantidad: "",
+            peso_neto: "",
+            unidad_medida_peso_neto: "",
+            id_producto: "",
             id_compra: "",
             id_deposito: "",
-            id_producto: "",
         });
 
         this.setApi({

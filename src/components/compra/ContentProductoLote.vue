@@ -1,29 +1,33 @@
 
 <template>
-    <div class="animate__animated animate__fadeInUpBig">
+    <div class="animate__animated animate__bounceInDown">
         <div class="d-flex flex-warp mt-2">
-
-            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1"
-                @click="emit('toHandleElement', 'compra-data-table', null)" rounded>
-                <v-icon icon="mdi-table"></v-icon>&nbsp;principal
+            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1"
+                @click="emit('toHandleComponent', 'compra-data-table', null)" rounded>
+                <v-icon icon="mdi-table-large"></v-icon>&nbsp;principal
             </v-btn>
 
-            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="newForm()" rounded>
+            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1"
+                @click="handleWithComponent('data-table')" rounded>
+                <v-icon icon="mdi-table"></v-icon>&nbsp;tablero
+            </v-btn>
+
+
+            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="newForm()" rounded>
                 <v-icon icon="mdi-plus"></v-icon>&nbsp;nuevo lote producto
             </v-btn>
 
-            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="clear()" rounded>
+            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="clear()" rounded>
                 <v-icon icon="mdi-delete-sweep"></v-icon>
             </v-btn>
 
-            <v-btn v-bind="props" color="secondary" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
+            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
                 <v-icon icon="mdi-refresh"></v-icon>
             </v-btn>
 
         </div>
         <v-card class="mt-1 flex-grow-1" elevation="10">
-
-            <v-card-title class="bg-secondary">
+            <v-card-title class="bg-cyan-darken-1">
                 <v-icon icon="mdi-text-box"></v-icon>&nbsp;<span class="text-h6">Kardex</span>
             </v-card-title>
             <v-card-text>
@@ -35,17 +39,17 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th class="text-secondary">Fecha de compra:</th>
+                                <th class="text-cyan-darken-1">Fecha de compra:</th>
                                 <td>{{ format_date.dateOnlyFormatter(props.is_compra.compra.fecha_compra) }}</td>
                             </tr>
 
                             <tr>
-                                <th class="text-secondary">Tipo de lote_producto:</th>
+                                <th class="text-cyan-darken-1">Tipo de compra:</th>
                                 <td>{{ props.is_compra.documento_compra.tipo_compra }}</td>
                             </tr>
 
                             <tr>
-                                <th class="text-secondary">Nota:</th>
+                                <th class="text-cyan-darken-1">Nota:</th>
                                 <td v-if="props.is_compra.compra.nota == null" class="text-warning">Sin nota!</td>
                                 <td v-else>{{ props.is_compra.compra.nota }}</td>
                             </tr>
@@ -53,8 +57,14 @@
                         </tbody>
                     </v-table>
                 </div>
+            </v-card-text>
+        </v-card>
+    </div>
+
+        <v-card v-if="component_show.data_table" class="mt-4 animate__animated animate__bounceInDown">
+            <v-card-text>
                 <v-text-field v-model="search_data" append-inner-icon="mdi-magnify" clearable label="Buscar Registros..."
-                    color="amber-darken-4" />
+                    color="cyan-darken-1" />
                 <v-data-table class="my-3" :hover="true" :items="data" :headers="columns" :search="search_data"
                     :loading="loading_data_table" :items-per-page-options="items_per_page_options" :show-current-page="true"
                     :fixed-header="true" :height="500" :sort-by="[{ key: 'id', order: 'desc' }]">
@@ -86,8 +96,7 @@
 
                     <template v-slot:item.actions="{ item }">
                         <div style="min-width: 150px;">
-                            <v-btn @click="editForm(item)" class="ma-1" color="success" variant="elevated"
-                                rounded>
+                            <v-btn @click="editForm(item)" class="ma-1" color="success" variant="elevated" rounded>
                                 <v-icon icon="mdi-pencil"></v-icon>
                             </v-btn>
                             <v-btn @click="openDeleteData(item)" class="ma-1" color="red" variant="elevated" rounded>
@@ -95,17 +104,13 @@
                             </v-btn>
                         </div>
                     </template>
-
                 </v-data-table>
-
             </v-card-text>
         </v-card>
-    </div>
 
-    <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
-        <FormLoteProducto :is_compra="props.is_compra" :is_item_lote_producto="item_lote_producto" @toCloseForm="closeForm"
-            @toLocalUpdateDataTable="localUpdateDataTable" />
-    </v-dialog>
+
+    <FormLoteProducto v-if="component_show.form" :is_compra="props.is_compra" :is_item_lote_producto="item_lote_producto"
+        @toCloseForm="closeForm" @toLocalUpdateDataTable="localUpdateDataTable" />
 
     <v-dialog v-model="dialog_delete" persistent max-width="500px">
         <v-card class="animate__animated animate__flipInX pa-5" elevation="24">
@@ -140,7 +145,7 @@ import FormatDateDyl from '@/util/FormatDateDyl';
 
 //props y emits
 const props = defineProps(['is_compra']);
-const emit = defineEmits(['toHandleElement']);
+const emit = defineEmits(['toHandleComponent']);
 
 //data
 const index_data_item = ref(-1);
@@ -150,13 +155,11 @@ const item_lote_producto = ref({});
 const search_data = ref("");
 const loading_data_table = ref(null);
 const format_date = new FormatDateDyl();
-
 const items_per_page_options = ref([
     { value: 10, title: '10' },
     { value: 25, title: '25' },
     { value: 50, title: '50' },
 ]);
-
 const columns = ref([
     { title: 'Producto', key: 'nombre_producto' },
     { title: 'Fecha de vencimiento', key: 'fecha_vencimiento' },
@@ -167,11 +170,16 @@ const columns = ref([
     { title: 'Acciones', key: 'actions' },
 ]);
 const data = ref([]);
+const component_show = ref({
+    data_table: false,
+    form: false,
+})
+
 //methods
 
 const loadDataTable = () => {
     const lote_producto = new LoteProducto();
-    lote_producto.setParameter({id_compra: props.is_compra.compra.id});
+    lote_producto.setParameter({ id_compra: props.is_compra.compra.id });
 
     loading_data_table.value = 'deep-purple-lighten-1';
     setTimeout(async () => {
@@ -223,6 +231,7 @@ const newForm = () => {
     const lote_producto = new LoteProducto();
     item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     dialog_form.value = true;
+    handleWithComponent("form");
 }
 
 const editForm = (item) => {
@@ -231,6 +240,7 @@ const editForm = (item) => {
     item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
+    handleWithComponent("form");
 }
 
 const localUpdateDataTable = (type, item) => {
@@ -247,7 +257,23 @@ const localUpdateDataTable = (type, item) => {
     }
 }
 
+const handleWithComponent = (component) => {
+    switch (component) {
+        case "data-table":
+            component_show.value.data_table = true;
+            component_show.value.form = false;
+            break;
+        case "form":
+            component_show.value.data_table = false;
+            component_show.value.form = true;
+            break;
+        default: toastify("warning", "Error en el metodo handleWithComponent.");
+            break;
+    }//switch
+}
+
 onMounted(() => {
+    handleWithComponent("data-table");
     loadDataTable();
 });
 

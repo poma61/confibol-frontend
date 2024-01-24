@@ -1,5 +1,5 @@
 <template>
-    <div v-if="element_show.compra_data_table" class="animate__animated animate__fadeInUpBig">
+    <div v-if="component_show.compra_data_table" class="animate__animated animate__fadeInUpBig">
         <div class="d-flex flex-wrap mt-2">
             <v-btn color="deep-purple-lighten-1" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
                 <v-icon icon="mdi-refresh"></v-icon>&nbsp;Actualizar
@@ -29,7 +29,7 @@
                     </template>
 
                     <template v-slot:item.add_product_lote="{ item }">
-                        <v-btn @click="handleElement('product-lot', item)" class="ma-1" color="cyan-darken-1"
+                        <v-btn @click="handleComponent('lote-producto', item)" class="ma-1" color="cyan-darken-1"
                             variant="elevated" rounded>
                             <v-icon icon="mdi-text-box-plus"></v-icon>
                         </v-btn>
@@ -57,11 +57,11 @@
         </v-card>
     </div>
 
-    <ContentProductoLote v-if="element_show.product_lot" :is_compra="item_compra" @toHandleElement="handleElement" />
+    <ContentProductoLote v-if="component_show.lote_producto" :is_compra="item_compra" @toHandleComponent="handleComponent" />
 
     <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
         <FormDeposito :is_ciudad="ciudad" :is_item_compra="item_compra" @toCloseForm="closeForm"
-            @toLocalUpdateDataTable="localUpdateDataTable" @toHandleElement="handleElement" />
+            @toLocalUpdateDataTable="localUpdateDataTable" @toHandleComponent="handleComponent" />
     </v-dialog>
 
 
@@ -73,7 +73,6 @@
                 <p class="text-h6">
                     ¿Esta seguro(a) de eliminar este registro?
                 </p>
-
             </v-card-text>
             <v-card-actions>
                 <div class="d-flex justify-center" style="width: 100%;">
@@ -106,9 +105,9 @@ const search_data = ref("");
 const loading_data_table = ref(null);
 const ciudad = ref("");
 const format_date = new FormatDateDyl();
-const element_show = ref({
+const component_show = ref({
     compra_data_table: false,
-    product_lot: false,
+    lote_producto: false,
 })
 
 const items_per_page_options = ref([
@@ -128,9 +127,9 @@ const data = ref([]);
 //methods
 
 const loadDataTable = () => {
-    handleElement("compra-data-table", null);
+    handleComponent("compra-data-table", null);
     const compra = new Compra(ciudad.value);
-    loading_data_table.value = 'deep-purple-lighten-1 ';
+    loading_data_table.value = 'deep-purple-lighten-1';
     setTimeout(async () => {
         const response = await compra.index();
         loading_data_table.value = null;
@@ -154,7 +153,7 @@ const openDeleteData = (item) => {
             id: item.id,
             nota: item.nota,
             fecha_compra: item.fecha_compra,
-        },
+        }, 
         documento_compra: {
             tipo_compra: item.tipo_compra,
             recibo: item.recibo,
@@ -240,13 +239,13 @@ const witchParamsRoute = (item) => {
     ciudad.value = item;
 }
 
-const handleElement = (element, item) => {
+const handleComponent = (element, item) => {
     switch (element) {
         case "compra-data-table":
-            element_show.value.compra_data_table = true;
-            element_show.value.product_lot = false;
+            component_show.value.compra_data_table = true;
+            component_show.value.lote_producto = false;
             break;
-        case "product-lot":
+        case "lote-producto":
             item_compra.value = {
                 compra: {
                     id: item.id,
@@ -263,10 +262,10 @@ const handleElement = (element, item) => {
                     id_compra: item.id_compra,
                 },
             }
-            element_show.value.compra_data_table = false;
-            element_show.value.product_lot = true;
+            component_show.value.compra_data_table = false;
+            component_show.value.lote_producto = true;
             break;
-        default: toastify("warning", "Error en el metodo handleElement.");
+        default: toastify("warning", "Error en el metodo handleComponent.");
             break;
     }//switch
 }

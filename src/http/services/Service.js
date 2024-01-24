@@ -1,22 +1,22 @@
 import axios from '@/http/connection/axios';
-
+import { emptyObj, assignObjWithPropagation, assignObjExists, assignObjPropertyStrict } from '@/util/objectDyl';
 class Service {
     constructor() {
         this.fillable = {};
         this.parameter = {};
-        this.attributes = { ...this.fillable };
+        this.attributes = assignObjWithPropagation(this.fillable);
         this.config = {
             headers: {
                 'Assept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        }
+        };
         this.api = {
             index: { url: "", method: "" },
             store: { url: "", method: "" },
             update: { url: "", method: "" },
             destroy: { url: "", method: "" },
-        }
+        };
     }
 
     setAttributes(...args) {
@@ -38,41 +38,29 @@ class Service {
                     //cuando hay dos parametros la funcion se esta ejecutando de forma recursiva
                     let target = args[0];
                     const source = args[1];
+                    return assignObjPropertyStrict(target, source);
 
-                    for (const key in target) {
-                        if (Object.prototype.hasOwnProperty.call(target, key) && source[key] != undefined) {
-                            target[key] = source[key];
-                        }
-                    }
-                    return target;
                 } else {
                     //solo un parametro no se ejecuta de forma recursiva
                     let source = args[0];
-                    for (const key in this.attributes) {
-                        if (Object.prototype.hasOwnProperty.call(this.attributes, key) && source[key] != undefined) {
-                            this.attributes[key] = source[key];
-                        }
-                    }
+                    this.attributes = assignObjPropertyStrict(this.attributes, source);
                 }
-
             }//else
-
         } catch (error) {
             console.error(error + "");
         }
-
-    }
-
-    setApi(api) {
-        this.api = { ...api }
-    }
-
-    getApi() {
-        return this.api;
     }
 
     getAttributes() {
         return this.attributes;
+    }
+
+    setApi(api) {
+        this.api = assignObjWithPropagation(api);
+    }
+
+    getApi() {
+        return this.api;
     }
 
     async index() {
@@ -82,22 +70,19 @@ class Service {
                 this.config.headers['X-HTTP-Method-Override'] = "PUT";
                 is_method = "post";
             }
-            if (this.emptyObject(this.getParameter())) {
+            if (emptyObj(this.getParameter())) {
                 //true cuando el objeto esta vacio
                 const resolve = await axios[is_method](this.getApi().index.url, this.config);
                 return resolve.data;
             } else {
+                //false cuando el objeto NO esta vacio
                 const resolve = await axios[is_method](this.getApi().index.url, this.getParameter(), this.config);
                 return resolve.data;
             }
-
         } catch (error) {
             if (error.response == undefined || error.response.data == undefined) {
                 console.error(error);
-                return {
-                    status: false,
-                    message: error + "",
-                };
+                return { status: false, message: error + "" };
             }
             return error.response.data;
         }
@@ -111,17 +96,13 @@ class Service {
                 is_method = "post";
             }
             this.setParameter(this.getAttributes());
-
             const resolve = await axios[is_method](this.getApi().store.url, this.getParameter(), this.config);
             return resolve.data;
 
         } catch (error) {
             if (error.response == undefined || error.response.data == undefined) {
                 console.error(error);
-                return {
-                    status: false,
-                    message: error + "",
-                };
+                return { status: false, message: error + "" };
             }
 
             return error.response.data;
@@ -136,7 +117,6 @@ class Service {
         }
 
         this.setParameter(this.getAttributes());
-
         try {
             const resolve = await axios[is_method](this.getApi().update.url, this.getParameter(), this.config);
             return resolve.data;
@@ -144,14 +124,9 @@ class Service {
         } catch (error) {
             if (error.response == undefined || error.response.data == undefined) {
                 console.error(error);
-                return {
-                    status: false,
-                    message: error + "",
-                };
+                return { status: false, message: error + "" };
             }
-
             return error.response.data;
-
         }
     }//update
 
@@ -171,20 +146,16 @@ class Service {
         } catch (error) {
             if (error.response == undefined || error.response.data == undefined) {
                 console.error(error);
-                return {
-                    status: false,
-                    message: error + "",
-                };
+                return { status: false, message: error + "" };
             }
 
             return error.response.data;
         }
-
     }//destroy
 
     setFillable(fillable) {
-        this.fillable = fillable;
-        this.attributes = { ...this.fillable };
+        this.fillable = assignObjWithPropagation(fillable);
+        this.attributes = assignObjWithPropagation(this.fillable);
     }
 
     getFillable() {
@@ -192,17 +163,13 @@ class Service {
     }
 
     setParameter(parameter) {
-        this.parameter = Object.assign(this.parameter, parameter);
+        this.parameter = assignObjExists(this.parameter, parameter);
     }
 
     getParameter() {
         return this.parameter;
     }
 
-    emptyObject(obj) {
-        //devolvera true si el objeto esta vacio
-        return Object.keys(obj).length == 0;
-    }
-
 }//class
 export default Service;
+
