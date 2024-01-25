@@ -1,7 +1,7 @@
 
 <template>
     <div class="animate__animated animate__bounceInDown">
-        <div class="d-flex flex-warp mt-2">
+        <div class="d-flex flex-wrap mt-2">
             <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1"
                 @click="emit('toHandleComponent', 'compra-data-table', null)" rounded>
                 <v-icon icon="mdi-table-large"></v-icon>&nbsp;principal
@@ -12,19 +12,13 @@
                 <v-icon icon="mdi-table"></v-icon>&nbsp;tablero
             </v-btn>
 
-
-            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="newForm()" rounded>
-                <v-icon icon="mdi-plus"></v-icon>&nbsp;nuevo lote producto
-            </v-btn>
-
-            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="clear()" rounded>
-                <v-icon icon="mdi-delete-sweep"></v-icon>
-            </v-btn>
-
             <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
                 <v-icon icon="mdi-refresh"></v-icon>
             </v-btn>
 
+            <v-btn v-bind="props" color="cyan-darken-1" variant="elevated" class="ma-1" @click="newForm()" rounded>
+                <v-icon icon="mdi-plus"></v-icon>&nbsp;nuevo lote producto
+            </v-btn>
         </div>
         <v-card class="mt-1 flex-grow-1" elevation="10">
             <v-card-title class="bg-cyan-darken-1">
@@ -61,56 +55,56 @@
         </v-card>
     </div>
 
-        <v-card v-if="component_show.data_table" class="mt-4 animate__animated animate__bounceInDown">
-            <v-card-text>
-                <v-text-field v-model="search_data" append-inner-icon="mdi-magnify" clearable label="Buscar Registros..."
-                    color="cyan-darken-1" />
-                <v-data-table class="my-3" :hover="true" :items="data" :headers="columns" :search="search_data"
-                    :loading="loading_data_table" :items-per-page-options="items_per_page_options" :show-current-page="true"
-                    :fixed-header="true" :height="500" :sort-by="[{ key: 'id', order: 'desc' }]">
+    <v-card v-if="component_show.data_table" class="mt-4 animate__animated animate__bounceInDown" elevation="10">
+        <v-card-text>
+            <v-text-field v-model="search_data" append-inner-icon="mdi-magnify" clearable label="Buscar Registros..."
+                color="cyan-darken-1" />
+            <v-data-table class="my-3" :hover="true" :items="data" :headers="columns" :search="search_data"
+                :loading="loading_data_table" :items-per-page-options="items_per_page_options" :show-current-page="true"
+                :fixed-header="true" :height="500" :sort-by="[{ key: 'id', order: 'desc' }]">
 
-                    <template v-slot:loading>
-                        <v-skeleton-loader type="table-row@13"></v-skeleton-loader>
-                    </template>
+                <template v-slot:loading>
+                    <v-skeleton-loader type="table-row@13"></v-skeleton-loader>
+                </template>
 
-                    <template v-slot:item.details="{ item }">
-                        <v-btn icon="mdi-text-box" @click="showItem(item)" color="success" class="ma-1" />
-                    </template>
+                <template v-slot:item.details="{ item }">
+                    <v-btn icon="mdi-text-box" @click="showItem(item)" color="success" class="ma-1" />
+                </template>
 
-                    <template v-slot:item.costo_unitario="{ item }">
-                        <v-chip color="orange-darken-4">
-                            Bs. {{ item.costo_unitario.toFixed(2) }}
-                        </v-chip>
-                    </template>
+                <template v-slot:item.costo_unitario="{ item }">
+                    <v-chip color="orange-darken-4">
+                        Bs. {{ item.costo_unitario.toFixed(2) }}
+                    </v-chip>
+                </template>
 
-                    <template v-slot:item.detalle="{ item }">
-                        <p class="text-warning" v-if="item.detalle == null || item.detalle == ''">Sin detalle!</p>
-                        <p v-else>{{ item.detalle }}</p>
-                    </template>
+                <template v-slot:item.descripcion="{ item }">
+                    <p class="text-warning" v-if="item.descripcion == null || item.descripcion == ''">Sin descripcion!</p>
+                    <p v-else>{{ item.descripcion }}</p>
+                </template>
 
-                    <template v-slot:item.fecha_vencimiento="{ item }">
-                        <v-chip color="success">
-                            {{ format_date.dateOnlyFormatter(item.fecha_vencimiento) }}
-                        </v-chip>
-                    </template>
+                <template v-slot:item.fecha_vencimiento="{ item }">
+                    <v-chip color="success">
+                        {{ format_date.dateOnlyFormatter(item.fecha_vencimiento) }}
+                    </v-chip>
+                </template>
 
-                    <template v-slot:item.actions="{ item }">
-                        <div style="min-width: 150px;">
-                            <v-btn @click="editForm(item)" class="ma-1" color="success" variant="elevated" rounded>
-                                <v-icon icon="mdi-pencil"></v-icon>
-                            </v-btn>
-                            <v-btn @click="openDeleteData(item)" class="ma-1" color="red" variant="elevated" rounded>
-                                <v-icon icon="mdi-delete"></v-icon>
-                            </v-btn>
-                        </div>
-                    </template>
-                </v-data-table>
-            </v-card-text>
-        </v-card>
+                <template v-slot:item.actions="{ item }">
+                    <div style="min-width: 150px;">
+                        <v-btn @click="editForm(item)" class="ma-1" color="success" variant="elevated" rounded>
+                            <v-icon icon="mdi-pencil"></v-icon>
+                        </v-btn>
+                        <v-btn @click="openDeleteData(item)" class="ma-1" color="red" variant="elevated" rounded>
+                            <v-icon icon="mdi-delete"></v-icon>
+                        </v-btn>
+                    </div>
+                </template>
+            </v-data-table>
+        </v-card-text>
+    </v-card>
 
 
     <FormLoteProducto v-if="component_show.form" :is_compra="props.is_compra" :is_item_lote_producto="item_lote_producto"
-        @toCloseForm="closeForm" @toLocalUpdateDataTable="localUpdateDataTable" />
+        @toLocalUpdateDataTable="localUpdateDataTable" :is_action_form="action_form" />
 
     <v-dialog v-model="dialog_delete" persistent max-width="500px">
         <v-card class="animate__animated animate__flipInX pa-5" elevation="24">
@@ -120,7 +114,6 @@
                 <p class="text-h6">
                     ¿Esta seguro(a) de eliminar este registro?
                 </p>
-
             </v-card-text>
             <v-card-actions>
                 <div class="d-flex justify-center" style="width: 100%;">
@@ -142,6 +135,7 @@ import LoteProducto from '@/http/services/LoteProducto';
 import { ref, defineProps, defineEmits, onMounted } from 'vue';
 import toastify from '@/composables/toastify';
 import FormatDateDyl from '@/util/FormatDateDyl';
+import { assignObjectNew, assignObjectExists } from '@/util/objectDyl';
 
 //props y emits
 const props = defineProps(['is_compra']);
@@ -150,7 +144,6 @@ const emit = defineEmits(['toHandleComponent']);
 //data
 const index_data_item = ref(-1);
 const dialog_delete = ref(false);
-const dialog_form = ref(false);
 const item_lote_producto = ref({});
 const search_data = ref("");
 const loading_data_table = ref(null);
@@ -161,22 +154,24 @@ const items_per_page_options = ref([
     { value: 50, title: '50' },
 ]);
 const columns = ref([
-    { title: 'Producto', key: 'nombre_producto' },
+    { title: 'Producto', key: 'producto', value: item => `${item.nombre_producto}, ${item.marca}` },
+    { title: 'Codigo', key: 'codigo' },
     { title: 'Fecha de vencimiento', key: 'fecha_vencimiento' },
-    { title: 'Detalle', key: 'detalle' },
+    { title: 'Peso neto', key: 'peso', value: item => `${item.peso_neto} ${item.unidad_medida_peso_neto}` },
+    { title: 'Descripcion', key: 'descripcion' },
     { title: 'Cantidad', key: 'cantidad' },
     { title: 'Costo unitario', key: 'costo_unitario' },
-    { title: 'Deposito', key: 'nombre_deposito' },
+    { title: 'Deposito', key: 'deposito', value: item => `${item.nombre_deposito}, ${item.ciudad}` },
     { title: 'Acciones', key: 'actions' },
 ]);
 const data = ref([]);
 const component_show = ref({
     data_table: false,
     form: false,
-})
+});
+const action_form = ref("");
 
 //methods
-
 const loadDataTable = () => {
     const lote_producto = new LoteProducto();
     lote_producto.setParameter({ id_compra: props.is_compra.compra.id });
@@ -200,7 +195,7 @@ const clear = () => {
 }
 
 const openDeleteData = (item) => {
-    item_lote_producto.value = Object.assign({}, item);
+    item_lote_producto.value = assignObjectNew(item);
     index_data_item.value = data.value.indexOf(item);
     dialog_delete.value = true;
 }
@@ -209,13 +204,10 @@ const closeDeleteData = () => {
     clear();
     dialog_delete.value = false;
 }
-const closeForm = () => {
-    clear();
-    dialog_form.value = false;
-}
+
 
 const confirmDeleteData = async () => {
-    const lote_producto = new LoteProducto(Object.assign({}, item_lote_producto.value));
+    const lote_producto = new LoteProducto(assignObjectNew(item_lote_producto.value));
 
     const response = await lote_producto.destroy();
     if (response.status) {
@@ -228,28 +220,34 @@ const confirmDeleteData = async () => {
 }
 
 const newForm = () => {
-    const lote_producto = new LoteProducto();
-    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
-    dialog_form.value = true;
     handleWithComponent("form");
+    action_form.value = "new";
+    const lote_producto = new LoteProducto();
+    item_lote_producto.value = lote_producto.getAttributes();
 }
 
 const editForm = (item) => {
     const lote_producto = new LoteProducto();
     lote_producto.setAttributes(item);
-    item_lote_producto.value = Object.assign({}, lote_producto.getAttributes());
+    item_lote_producto.value = assignObjectNew(lote_producto.getAttributes());
     index_data_item.value = data.value.indexOf(item);
-    dialog_form.value = true;
     handleWithComponent("form");
+    action_form.value = "edit";
 }
 
 const localUpdateDataTable = (type, item) => {
     switch (type) {
         case 'new':
-            data.value.push(Object.assign({}, item));
+            //cuando es registro nuevo es carga masiva por lo tanto
+            //la variable item es un array de objetos
+            item.forEach((obj) => {
+                data.value.push(assignObjectNew(obj));
+            });
             break;
         case 'edit':
-            Object.assign(data.value[index_data_item.value], item);
+            //cuando es edicion de registro la variable item ya NO es array
+            //es solo un objeto
+            assignObjectExists(data.value[index_data_item.value], item);
             break;
         default:
             toastify('danger', 'No se puede reconocer la accion al registrar.');

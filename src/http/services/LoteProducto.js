@@ -11,9 +11,9 @@ class LoteProducto extends Service {
             cantidad: "",
             peso_neto: "",
             unidad_medida_peso_neto: "",
-            id_producto: "",
-            id_compra: "",
-            id_deposito: "",
+            id_producto: null,
+            id_compra: null,
+            id_deposito: null,
         });
 
         this.setApi({

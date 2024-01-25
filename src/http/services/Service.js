@@ -1,10 +1,10 @@
 import axios from '@/http/connection/axios';
-import { emptyObj, assignObjWithPropagation, assignObjExists, assignObjPropertyStrict } from '@/util/objectDyl';
+import { emptyObject, assignObjectExists, assignObjectPropertyStrict } from '@/util/objectDyl';
 class Service {
     constructor() {
         this.fillable = {};
         this.parameter = {};
-        this.attributes = assignObjWithPropagation(this.fillable);
+        this.attributes = {...this.fillable};
         this.config = {
             headers: {
                 'Assept': 'application/json',
@@ -38,14 +38,15 @@ class Service {
                     //cuando hay dos parametros la funcion se esta ejecutando de forma recursiva
                     let target = args[0];
                     const source = args[1];
-                    return assignObjPropertyStrict(target, source);
+                    return assignObjectPropertyStrict(target, source);
 
                 } else {
                     //solo un parametro no se ejecuta de forma recursiva
                     let source = args[0];
-                    this.attributes = assignObjPropertyStrict(this.attributes, source);
+                    this.attributes = assignObjectPropertyStrict(this.attributes, source);
                 }
             }//else
+           
         } catch (error) {
             console.error(error + "");
         }
@@ -56,7 +57,7 @@ class Service {
     }
 
     setApi(api) {
-        this.api = assignObjWithPropagation(api);
+        this.api = {...api};
     }
 
     getApi() {
@@ -70,7 +71,7 @@ class Service {
                 this.config.headers['X-HTTP-Method-Override'] = "PUT";
                 is_method = "post";
             }
-            if (emptyObj(this.getParameter())) {
+            if (emptyObject(this.getParameter())) {
                 //true cuando el objeto esta vacio
                 const resolve = await axios[is_method](this.getApi().index.url, this.config);
                 return resolve.data;
@@ -154,8 +155,8 @@ class Service {
     }//destroy
 
     setFillable(fillable) {
-        this.fillable = assignObjWithPropagation(fillable);
-        this.attributes = assignObjWithPropagation(this.fillable);
+        this.fillable = {...fillable};
+        this.attributes = {...this.fillable};
     }
 
     getFillable() {
@@ -163,7 +164,7 @@ class Service {
     }
 
     setParameter(parameter) {
-        this.parameter = assignObjExists(this.parameter, parameter);
+        this.parameter = assignObjectExists(this.parameter, parameter);
     }
 
     getParameter() {

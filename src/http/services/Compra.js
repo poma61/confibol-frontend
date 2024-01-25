@@ -17,7 +17,7 @@ class Compra extends Service {
                 lista_empaque: "",
                 poliza: "",
                 factura_importacion: "",
-                id_compra: "",
+                id_compra: null,
             },
         });
 

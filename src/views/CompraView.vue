@@ -4,7 +4,7 @@
         <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-yellow-darken-3 as-box-shadow">
             <v-icon icon="mdi-cart"></v-icon>&nbsp;Compra
         </h1>
-        <v-card class="mt-5">
+        <v-card class="my-5" elevation="10">
             <v-tabs class="animate__animated animate__bounceInRight" bg-color="light-blue-darken-3" stacked show-arrows color="light-blue-accent-1">
                 <v-tab :to="{ name: 'n-compra', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
@@ -53,8 +53,9 @@
 
             </v-tabs>
 
-            <MainContentCompra ref="tableCompraComponent" />
+           
         </v-card>
+        <MainContentCompra ref="ComponentMainContentCompra" />
     </MainApp>
 </template>
 
@@ -63,16 +64,16 @@ import MainApp from '@/layouts/MainApp.vue';
 import MainContentCompra from '@/components/compra/MainContentCompra.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'
-const tableCompraComponent = ref(null)
+const ComponentMainContentCompra = ref(null)
 const route = useRoute();
 
 watch(() => route.params.ciudad, async (new_ciudad) => {
-    tableCompraComponent.value.witchParamsRoute(new_ciudad);
-    await tableCompraComponent.value.loadDataTable();
+    ComponentMainContentCompra.value.witchParamsRoute(new_ciudad);
+    await ComponentMainContentCompra.value.loadDataTable();
 });
 
 onMounted(async () => {
-    tableCompraComponent.value.witchParamsRoute(route.params.ciudad);
-    await tableCompraComponent.value.loadDataTable();
+    ComponentMainContentCompra.value.witchParamsRoute(route.params.ciudad);
+    await ComponentMainContentCompra.value.loadDataTable();
 });            
 </script>

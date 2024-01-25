@@ -1,6 +1,6 @@
 <template>
     <div v-if="component_show.compra_data_table" class="animate__animated animate__fadeInUpBig">
-        <div class="d-flex flex-wrap mt-2">
+        <div class="d-flex flex-wrap">
             <v-btn color="deep-purple-lighten-1" variant="elevated" class="ma-1" @click="loadDataTable()" rounded>
                 <v-icon icon="mdi-refresh"></v-icon>&nbsp;Actualizar
             </v-btn>
@@ -10,7 +10,7 @@
             </v-btn>
         </div>
 
-        <v-card class="my-2 flex-grow-1">
+        <v-card class="my-2 flex-grow-1" elevation="10">
             <v-card-text>
                 <v-text-field v-model="search_data" append-inner-icon="mdi-magnify" clearable label="Buscar Registros..."
                     color="deep-purple-lighten-1" />
@@ -57,7 +57,7 @@
         </v-card>
     </div>
 
-    <ContentProductoLote v-if="component_show.lote_producto" :is_compra="item_compra" @toHandleComponent="handleComponent" />
+    <ContentLoteProducto v-if="component_show.lote_producto" :is_compra="item_compra" @toHandleComponent="handleComponent" />
 
     <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
         <FormDeposito :is_ciudad="ciudad" :is_item_compra="item_compra" @toCloseForm="closeForm"
@@ -94,7 +94,7 @@ import Compra from '@/http/services/Compra';
 import { ref, defineExpose } from 'vue';
 import toastify from '@/composables/toastify';
 import FormatDateDyl from '@/util/FormatDateDyl';
-import ContentProductoLote from '@/components/compra/ContentProductoLote.vue';
+import ContentLoteProducto from '@/components/compra/ContentLoteProducto.vue';
 
 //data
 const index_data_item = ref(-1);

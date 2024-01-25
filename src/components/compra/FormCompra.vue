@@ -83,7 +83,7 @@ import toastify from '@/composables/toastify';
 
 //etmis y props
 const props = defineProps(['is_item_compra', 'is_ciudad']);
-const emit = defineEmits(['toCloseForm', 'toLocalUpdateDataTable', 'toHandleElement']);
+const emit = defineEmits(['toCloseForm', 'toLocalUpdateDataTable', 'toHandleComponent']);
 
 //data
 const fields_errors = ref({});
@@ -126,7 +126,7 @@ const save = () => {
                 toastify('success', response.message);
                 emit('toLocalUpdateDataTable', 'new', response.record);
                 emit('toCloseForm');
-                emit('toHandleElement', 'product-lot', response.record)
+                emit('toHandleComponent', 'lote-producto', response.record)
             } else {
                 if (response.validation_errors != undefined) {
                     fields_errors.value = Object.assign({}, response.validation_errors);

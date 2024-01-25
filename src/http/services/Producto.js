@@ -1,8 +1,6 @@
 
 import Service from '@/http/services/Service';
-import Categoria from '@/http/services/Categoria';
 import axios from '@/http/connection/axios';
-
 
 //verificar esta clase
 class Producto extends Service {
@@ -19,7 +17,7 @@ class Producto extends Service {
             update: { url: "/producto/edit-data", method: "put" },
             destroy: { url: "/producto/delete-data", method: "post" },
         });
-        this.categoria = new Categoria();
+
     }//constructor
 
     async list() {
