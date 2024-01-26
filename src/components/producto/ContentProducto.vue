@@ -1,60 +1,45 @@
 <template>
     <div class="d-flex">
-        <div class="d-flex flex-column">
+        <div class="d-flex flex-column animate__animated animate__bounceInLeft">
             <v-tooltip text="Actualizar tablero">
                 <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="amber-darken-3 " variant="elevated" class="ma-1"
-                        @click="loadDataIterator()" icon="mdi-refresh" />
+                    <v-btn v-bind="props" color="light-blue-accent-4" variant="elevated" class="ma-1"
+                        @click="loadDataIterator()" icon="mdi-refresh" :disabled="component_show.form" />
+                </template>
+            </v-tooltip>
+            <v-tooltip text="Tablero">
+                <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props" color="light-blue-accent-4" variant="elevated" class="ma-1"
+                        @click="handleComponent('data-iterator')" icon="mdi-table-large" />
                 </template>
             </v-tooltip>
             <v-tooltip text="Nuevo producto">
                 <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="amber-darken-3 " variant="elevated" class="ma-1" @click="newForm"
+                    <v-btn v-bind="props" color="light-blue-accent-4 " variant="elevated" class="ma-1" @click="newForm"
                         icon="mdi-plus" />
                 </template>
             </v-tooltip>
         </div>
 
         <div class="flex-grow-1">
+
             <!-- iterator -->
-            <v-card class="as-flex-item as-container-data-iterator animate__animated animate__zoomIn">
-                <v-overlay v-model="loading_data_iterator" contained class="d-flex align-center justify-center">
-                    <v-progress-circular color="teal-accent-4" indeterminate size="64"></v-progress-circular>
+            <v-card v-if="component_show.data_iterator" class="as-container-data-iterator animate__animated animate__zoomIn"
+                elevation="20">
+                <v-overlay v-model="loading_data_iterator" contained class="d-flex align-center justify-center" persistent>
+                    <div class="text-center">
+                        <v-progress-circular color="light-blue-accent-4" indeterminate size="100"></v-progress-circular>
+                        <p class="text-white text-h6">Cargando datos...</p>
+                    </div>
                 </v-overlay>
 
                 <v-data-iterator :items="data" :items-per-page="16" :search="search_item"
                     :sort-by="[{ key: 'id', order: 'desc' }]">
 
-                    <template v-slot:header="{ page, pageCount, prevPage, nextPage }">
-
-                        <div class="d-flex justify-space-between flex-wrap pa-2">
-                            <v-text-field v-model="search_item" clearable density="comfortable" hide-details
-                                placeholder="Buscar Registros" prepend-inner-icon="mdi-magnify" color="teal-accent-4"
-                                class="pa-2" style="min-width: 300px;" />
-
-                            <div class="d-flex align-center">
-                                <v-tooltip text="Anterior">
-                                    <template v-slot:activator="{ props }">
-                                        <v-btn v-bind="props" :disabled="page == 1" icon="mdi-arrow-left"
-                                            density="comfortable" variant="elevated" color="teal-accent-4"
-                                            @click="prevPage"></v-btn>
-                                    </template>
-                                </v-tooltip>
-
-                                <div class="mx-2 text-caption">
-                                    Pagina {{ page }} de {{ pageCount }}
-                                </div>
-
-                                <v-tooltip text="Siguiente">
-                                    <template v-slot:activator="{ props }">
-                                        <v-btn v-bind="props" :disabled="page >= pageCount" icon="mdi-arrow-right"
-                                            density="comfortable" variant="elevated" color="teal-accent-4 "
-                                            @click="nextPage"></v-btn>
-                                    </template>
-                                </v-tooltip>
-                            </div>
-                        </div>
-
+                    <template v-slot:header>
+                        <v-text-field v-model="search_item" clearable density="comfortable" hide-details
+                            placeholder="Buscar Registros" prepend-inner-icon="mdi-magnify" color="teal-accent-4"
+                            class="pa-2" />
                     </template>
 
                     <template v-slot:default="{ items }">
@@ -66,7 +51,7 @@
                                         <v-card class="pa-3" variant="tonal" min-height="200px">
                                             <!-- sdf -->
                                             <v-sheet>
-                                                <v-img :src="app.BASE_URL + item.raw.img_producto" height="150" />
+                                                <v-img :src="app.BASE_URL + item.raw.image_path" height="150" />
                                                 <v-table density="compact">
                                                     <tbody>
                                                         <tr>
@@ -82,7 +67,6 @@
                                                             <th>Categoria:</th>
                                                             <td>{{ item.raw.categoria }}</td>
                                                         </tr>
-
                                                     </tbody>
                                                 </v-table>
 
@@ -93,7 +77,7 @@
                                                     <v-tooltip text="Editar registro.">
                                                         <template v-slot:activator="{ props }">
                                                             <v-btn v-bind="props" size="small" icon="mdi-pencil"
-                                                                color="teal-accent-4" variant="elevated" class="ma-1"
+                                                                color="green-darken-1" variant="elevated" class="ma-1"
                                                                 @click="editForm(item.raw)" />
                                                         </template>
                                                     </v-tooltip>
@@ -114,18 +98,33 @@
                         </div>
                     </template>
 
+                    <template v-slot:footer="{ page, pageCount, prevPage, nextPage }">
+                        <div class="d-flex align-center justify-end pa-2">
+                            <v-btn :disabled="page == 1" icon="mdi-arrow-left" density="comfortable" variant="elevated"
+                                @click="prevPage" color="light-blue-accent-4" />
+
+                            <div class="mx-2 text-caption">
+                                Página {{ page }} de {{ pageCount }}
+                            </div>
+                            <v-btn :disabled="page >= pageCount" icon="mdi-arrow-right" density="comfortable"
+                                variant="elevated" @click="nextPage" color="light-blue-accent-4" />
+                        </div>
+                    </template>
+
                 </v-data-iterator>
 
                 <div class="as__data-iterator d-flex justify-center align-center" v-if="data.length == 0">
-                    <h1 class="text-h6 text-red">No hay datos.</h1>
+                    <p>No hay datos disponibles.</p>
                 </div>
             </v-card>
             <!-- iterator -->
+
+            <FormProducto v-if="component_show.form" :is_item_producto="item_producto"
+                @toLocalUpdateDataTable="localUpdateDataTable" @toNewForm="newForm" />
         </div>
 
     </div>
-    <!-- <FormProducto :p_item_producto="item_producto" 
-            @toLocalUpdateDataTable="localUpdateDataTable" @toNewForm="newForm" /> -->
+
 
     <v-dialog v-model="dialog_delete" persistent max-width="500px">
         <v-card class="px-5 py-5 animate__animated animate__bounceInDown">
@@ -138,10 +137,10 @@
             </v-card-text>
             <v-card-actions>
                 <div class="d-flex justify-center" style="width: 100%;">
-                    <v-btn color="red" variant="outlined" @click="closeDeleteItem" class="ma-1">
+                    <v-btn color="red" variant="elevated" @click="closeDeleteItem" class="ma-1">
                         <v-icon icon="mdi-cancel"></v-icon>&nbsp;Cancelar
                     </v-btn>
-                    <v-btn color="light-blue-accent-4" variant="outlined" class="ma-1" @click="confirmDeleteItem">
+                    <v-btn color="light-blue-accent-4" variant="elevated" class="ma-1" @click="confirmDeleteItem">
                         <v-icon icon="mdi-check-circle"></v-icon>&nbsp;Si
                     </v-btn>
                 </div>
@@ -154,8 +153,9 @@
 import { ref, onMounted } from 'vue';
 import Producto from '@/http/services/Producto';
 import toastify from '@/composables/toastify';
-//import FormProducto from '@/components/producto/FormProducto.vue';
+import FormProducto from '@/components/producto/FormProducto.vue';
 import app from '@/config/app';
+import { assignObjectExists, assignObjectNew } from '@/util/objectDyl';
 
 const loading_data_iterator = ref(false);
 const data = ref([]);
@@ -163,6 +163,10 @@ const item_producto = ref({});
 const index_item = ref(-1);
 const search_item = ref("");
 const dialog_delete = ref(false);
+const component_show = ref({
+    data_iterator: false,
+    form: false,
+});
 
 const loadDataIterator = () => {
     loading_data_iterator.value = true;
@@ -179,6 +183,7 @@ const loadDataIterator = () => {
     }, 200)
 }//loadDataIterator
 
+
 const clear = () => {
     item_producto.value = {};
     index_item.value = -1;
@@ -187,7 +192,7 @@ const clear = () => {
 const openDeleteItem = (item) => {
     index_item.value = data.value.indexOf(item);
     //solo pasamos el id porque si nos se muestra en el formulario los datos
-    item_producto.value = Object.assign({ id: item.id });
+    item_producto.value = assignObjectNew(item);
     dialog_delete.value = true;
 }
 
@@ -198,7 +203,7 @@ const closeDeleteItem = () => {
 
 const confirmDeleteItem = async () => {
     const producto = new Producto();
-    producto.setAttributes(Object.assign({}, item_producto.value));
+    producto.setAttributes(assignObjectNew(item_producto.value));
     const response = await producto.destroy();
     if (response.status) {
         data.value.splice(index_item.value, 1);
@@ -212,30 +217,51 @@ const confirmDeleteItem = async () => {
 const newForm = () => {
     clear();
     const producto = new Producto();
-    item_producto.value = Object.assign({}, producto.getAttributes());
+    item_producto.value = assignObjectNew(producto.getAttributes());
+    handleComponent('form');
 }
 
 const editForm = (item) => {
-    item_producto.value = Object.assign({}, item);
+    clear();
+    item_producto.value = assignObjectNew(item);
     index_item.value = data.value.indexOf(item);
+    handleComponent('form');
 }
 
 const localUpdateDataTable = (type, item) => {
     switch (type) {
         case 'new':
-            data.value.push(Object.assign({}, item));
+            data.value.push(assignObjectNew(item));
             break;
         case 'edit':
-            Object.assign(data.value[index_item.value], item);
+            assignObjectExists(data.value[index_item.value], item);
             break;
         default:
             toastify('warning', 'Error en el metodo localUpdateDataTable!');
             break;
     }
 }
+
+const handleComponent = (component) => {
+    switch (component) {
+        case "data-iterator":
+            component_show.value.data_iterator = true;
+            component_show.value.form = false;
+            break;
+        case "form":
+            component_show.value.data_iterator = false;
+            component_show.value.form = true;
+            break;
+        default: toastify("warning", "Error en el metodo handleComponent.");
+            break;
+    }//switch
+}
+
 onMounted(async () => {
     loadDataIterator();
+    handleComponent('data-iterator');
 });
+
 </script>
 
 <style  scoped>
@@ -247,20 +273,13 @@ ejemplo2:as__data-iterator =>height700px entonces as-container-data-iterator => 
 ========================================== */
 
 .as-container-data-iterator {
-    height: 800px;
+    height: 830px;
 }
 
 .as__data-iterator {
-    overflow: hidden;
-    overflow-y: auto;
+    overflow: auto;
     height: 700px;
     border-top: 1px solid #c2c2c2;
     border-bottom: 1px solid #c2c2c2;
-}
-
-@media only screen and (max-width: 500px) {
-    .as-container-data-iterator {
-        height: 820px;
-    }
 }
 </style>

@@ -1,7 +1,7 @@
 
 <template>
     <MainApp>
-        <h1 class="animate__animated animate__bounceInRight text-h6 my-3 pa-1 bg-yellow-darken-3 as-box-shadow">
+        <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-blue-grey-lighten-1 as-box-shadow">
             <v-icon icon="mdi-list-box-outline"></v-icon>&nbsp;Panel de productos
         </h1>
         <ContentProducto/>

@@ -4,12 +4,15 @@ import axios from '@/http/connection/axios';
 
 //verificar esta clase
 class Producto extends Service {
-    constructor() {
+    constructor(producto) {
         super();
         this.setFillable({
             id: 0,
             nombre_producto: "",
-            imagen: "",
+            marca: "",
+            image_path: "",
+            image_file: null,
+            categoria: "",
         });
         this.setApi({
             index: { url: "/producto/all-data", method: "post" },
@@ -18,6 +21,17 @@ class Producto extends Service {
             destroy: { url: "/producto/delete-data", method: "post" },
         });
 
+        this.config = {
+            headers: {
+                'Assept': 'application/json',
+                // 'Content-Type': 'application/json'
+                'Content-Type': 'multipart/form-data'// de esta forma podemos enviar imagenes
+            }
+        };
+
+        if (producto != undefined) {
+            this.setAttributes(producto);
+        }
     }//constructor
 
     async list() {

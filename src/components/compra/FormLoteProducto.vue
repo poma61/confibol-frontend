@@ -92,13 +92,20 @@
         </v-card-actions>
 
     </v-card>
+
+    <v-overlay v-model="loading_list_deposito_by_producto" class="d-flex align-center justify-center" persistent>
+        <div class="text-center">
+            <v-progress-circular color="yellow-darken-3" indeterminate size="100"></v-progress-circular>
+            <p class="text-h6 text-white">Cargando modulos...</p>
+        </div>
+    </v-overlay>
 </template>
 
 <script setup>
 import { ref, defineProps, defineEmits, computed, onMounted, watch } from 'vue';
 import LoteProducto from '@/http/services/LoteProducto';
 import toastify from '@/composables/toastify';
-import Deposito from '@/http/services/Deposito';
+import Deposito from '@/http/services/Deposito';  
 import Producto from '@/http/services/Producto';
 import app from '@/config/app';
 import { objectPropertyWithValue, assignObjectNew, assignObjectExists } from '@/util/objectDyl';
@@ -124,7 +131,7 @@ const loading_btn = ref(false);
 const list_deposito = ref([]);
 const list_producto = ref([]);
 const number_of_lote_producto = ref(1);
-
+const loading_list_deposito_by_producto = ref(false);
 //computed
 const showFieldsErrors = computed(() => {
     return function (field) {
@@ -273,11 +280,16 @@ const asseptDoubleNumber = (event, index, campo) => {
     items_lote_producto.value[index][campo] = valor_campo;
 }
 
-onMounted(async () => {
+onMounted(() => {
     withForm();
-    await initListDeposito();
-    await initListProducto();
+    loading_list_deposito_by_producto.value = true;
+    setTimeout(async () => {
+        await initListDeposito();
+        await initListProducto();
+        loading_list_deposito_by_producto.value = false;
+    }, 200)
+
 });
-</script> 
+</script>  
 
 

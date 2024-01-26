@@ -9,8 +9,8 @@
                 <!-- sm => es cuando en modo responsivo se aplica desde 600px aproximadamente-->
                 <!-- md=> es cuando en modo responsivo se aplica desde 800px aproximadamente   -->
                 <v-col cols="12">
-                    <v-text-field v-model="item_deposito.nombre_deposito" label="Nombre deposito (*)" color="teal-accent-4" clearable
-                        :error-messages="showFieldsErrors('nombre_deposito')" variant="outlined" />
+                    <v-text-field v-model="item_deposito.nombre_deposito" label="Nombre deposito (*)" color="teal-accent-4"
+                        clearable :error-messages="showFieldsErrors('nombre_deposito')" variant="outlined" />
                 </v-col>
 
                 <v-col cols="12">
@@ -38,14 +38,14 @@ import { ref, defineProps, defineEmits, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Deposito from '@/http/services/Deposito';
 import toastify from '@/composables/toastify';
-import { assignObjectNew, assignObjectExists } from '@/util/objectDyl';
+import { assignObjectNew } from '@/util/objectDyl';
 
 //etmis y props
-const props = defineProps(['is_item_deposito','is_ciudad']);
+const props = defineProps(['is_item_deposito', 'is_ciudad']);
 const emit = defineEmits(['toCloseForm', 'toUpdateDataTable']);
 
 //data
-const route=useRoute();
+const route = useRoute();
 const fields_errors = ref({});
 const item_deposito = ref(props.is_item_deposito);
 const loading_btn = ref(false);
@@ -73,7 +73,7 @@ const save = () => {
                 emit('toCloseForm');
             } else {
                 if (response.validation_errors != undefined) {
-                    fields_errors.value =assignObjectNew(response.validation_errors);
+                    fields_errors.value = assignObjectNew(response.validation_errors);
                 }
                 toastify('danger', response.message);
             }
@@ -88,7 +88,7 @@ const save = () => {
                 emit('toCloseForm');
             } else {
                 if (response.validation_errors != undefined) {
-                    fields_errors.value =assignObjectNew(response.validation_errors);
+                    fields_errors.value = assignObjectNew(response.validation_errors);
                 }
                 toastify('danger', response.message);
             }
