@@ -38,6 +38,7 @@ import { ref, defineProps, defineEmits, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Deposito from '@/http/services/Deposito';
 import toastify from '@/composables/toastify';
+import { assignObjectNew, assignObjectExists } from '@/util/objectDyl';
 
 //etmis y props
 const props = defineProps(['is_item_deposito','is_ciudad']);
@@ -61,7 +62,7 @@ const showFieldsErrors = computed(() => {
 const save = () => {
     loading_btn.value = true;
     setTimeout(async () => {
-        const deposito = new Deposito(props.is_ciudad, Object.assign({}, item_deposito.value));
+        const deposito = new Deposito(props.is_ciudad, assignObjectNew(item_deposito.value));
         if (deposito.getAttributes().id > 0) {
             //cuando es update
             const response = await deposito.update();
@@ -72,7 +73,7 @@ const save = () => {
                 emit('toCloseForm');
             } else {
                 if (response.validation_errors != undefined) {
-                    fields_errors.value = Object.assign({}, response.validation_errors);
+                    fields_errors.value =assignObjectNew(response.validation_errors);
                 }
                 toastify('danger', response.message);
             }
@@ -87,7 +88,7 @@ const save = () => {
                 emit('toCloseForm');
             } else {
                 if (response.validation_errors != undefined) {
-                    fields_errors.value = Object.assign({}, response.validation_errors);
+                    fields_errors.value =assignObjectNew(response.validation_errors);
                 }
                 toastify('danger', response.message);
             }

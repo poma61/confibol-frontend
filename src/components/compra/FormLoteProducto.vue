@@ -1,7 +1,7 @@
 <template>
     <v-card class="mt-4 animate__animated animate__bounceInDown" elevation="20">
         <v-card-title class="bg-primary">
-            <v-icon icon="mdi-cart"></v-icon>&nbsp;<span class="text-h6">Registrar lote producto</span>
+            <v-icon icon="mdi-package-variant"></v-icon>&nbsp;<span class="text-h6">Registrar lote producto</span>
         </v-card-title>
         <v-card-text class="pa-3">
             <p class="text-warning text-subtitle-1 mb-3">Los campos marcados con (*) son obligatorios.</p>
@@ -9,7 +9,7 @@
 
             <!--  solo mostramos esta parte cuando es nuevo registro -->
             <v-select v-if="props.is_action_form == 'new'" label="Cantidad de registros:" v-model="number_of_lote_producto"
-                :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" color="primary" @update:model-value="showNumberOfLoteProducto" />
+                :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" color="primary" @update:model-value="redesignForm" />
 
             <v-row v-for="(lote_producto, i) in items_lote_producto" :key="i">
                 <!-- sm => es cuando en modo responsivo se aplica desde 600px aproximadamente-->
@@ -48,7 +48,7 @@
                 </v-col>
 
                 <v-col cols="12" sm="6">
-                    <v-autocomplete chips label="Deposito" v-model="lote_producto.id_deposito" :items="list_deposito"
+                    <v-autocomplete chips label="Deposito (*)" v-model="lote_producto.id_deposito" :items="list_deposito"
                         item-value="id" item-title="text" color="primary" clearable
                         :error-messages="showFieldsErrors(`lote_productos.${i}.id_deposito`)">
 
@@ -62,10 +62,9 @@
                 </v-col>
 
                 <v-col cols="12" sm="6">
-                    <v-autocomplete label="Producto" v-model="lote_producto.id_producto" :items="list_producto"
+                    <v-autocomplete label="Producto (*)" v-model="lote_producto.id_producto" :items="list_producto"
                         item-title="text" item-value="id" chip color="primary" clearable
                         :error-messages="showFieldsErrors(`lote_productos.${i}.id_producto`)">
-
                         <template v-slot:chip="{ props, item }">
                             <v-chip v-bind="props" :prepend-avatar="app.BASE_URL + item.raw.img" :text="item.raw.text" />
                         </template>
@@ -73,7 +72,6 @@
                             <v-list-item v-bind="props" :prepend-avatar="app.BASE_URL + item.raw.img"
                                 :title="item.raw.text"></v-list-item>
                         </template>
-
                     </v-autocomplete>
                 </v-col>
 
@@ -103,7 +101,7 @@ import toastify from '@/composables/toastify';
 import Deposito from '@/http/services/Deposito';
 import Producto from '@/http/services/Producto';
 import app from '@/config/app';
-import { assignObjectExists, assignObjectNew } from '@/util/objectDyl';
+import { objectPropertyWithValue, assignObjectNew, assignObjectExists } from '@/util/objectDyl';
 
 //etmis y props
 const props = defineProps(['is_item_lote_producto', 'is_compra', 'is_action_form']);
@@ -112,10 +110,12 @@ const emit = defineEmits(['toLocalUpdateDataTable']);
 //watch
 //este trozo de codigo ayuda a volver a resetear los valores para un nuevo registro
 //entonces cuando se  ejecute el metodo newForm del componente ContentLoteProducto
-//entonces los valores de item_lote_producto se volveran a reasignar y asi se ejecutara el  watch
+//entonces los valores de item_lote_producto del componente padre se volveran a reasignar y asi se ejecutara el  watch
+//y asi actualizamos la variable items_lote_producto
 watch(() => props.is_item_lote_producto, (new_value, old_value) => {
-    assignRequiredDataForm();
+    withForm();
 });
+
 
 //data
 const fields_errors = ref({});
@@ -125,6 +125,7 @@ const list_deposito = ref([]);
 const list_producto = ref([]);
 const number_of_lote_producto = ref(1);
 
+//computed
 const showFieldsErrors = computed(() => {
     return function (field) {
         if (fields_errors.value[field]) {
@@ -134,22 +135,38 @@ const showFieldsErrors = computed(() => {
     }
 });
 
-const assignRequiredDataForm = () => {
-    const lote_producto = new LoteProducto({ id_compra: props.is_compra.compra.id });
+//methods
+const redesignForm = () => {
+    //copiamos el array porque talvez existan campos con datos llenados
+    const aux_items_lote_producto = items_lote_producto.value;
+    items_lote_producto.value = Array.from(
+        { length: number_of_lote_producto.value },
+        () => assignObjectNew(props.is_item_lote_producto)
+    );
+
+    //asignamos los valores anteriores de aux_items_lote_producto al nuevo array items_lote_producto
+    //manejamos el tamaño de items_lote_producto.value.length por que si manejamos el tamaño de 
+    //aux_items_lote_producto nos dara un error 
     for (let i = 0; i < items_lote_producto.value.length; i++) {
-        assignObjectExists(items_lote_producto.value[i], lote_producto.getAttributes());
-    }
+        if (objectPropertyWithValue(aux_items_lote_producto[i])) {
+            //true si la  al menos una propiedad tiene valor
+            assignObjectExists(items_lote_producto.value[i], aux_items_lote_producto[i]);
+        }
+    }//for
     fields_errors.value = {};
 }
 
-const showNumberOfLoteProducto = () => {
+const withForm = () => {
     switch (props.is_action_form) {
         case "new":
-            items_lote_producto.value = Array.from({ length: number_of_lote_producto.value }, () => assignObjectNew(props.is_item_lote_producto));
-            assignRequiredDataForm();
+            items_lote_producto.value = Array.from(
+                { length: number_of_lote_producto.value },
+                () => assignObjectNew(props.is_item_lote_producto)
+            );
+            fields_errors.value = {};
             break;
         case "edit":
-            items_lote_producto.value = [new LoteProducto(assignObjectNew(props.is_item_lote_producto)).getAttributes()];
+            items_lote_producto.value = [assignObjectNew(props.is_item_lote_producto)];
             break;
         default:
             toastify("warning", "Error en el metodo showNumberOfLoteProducto!");
@@ -160,10 +177,15 @@ const showNumberOfLoteProducto = () => {
 const save = () => {
     loading_btn.value = true;
     setTimeout(async () => {
-        const __lote_producto = items_lote_producto.value.map(item => new LoteProducto(assignObjectNew(item)));
+        //asginamos el id_compra
+        for (let i = 0; i < items_lote_producto.value.length; i++) {
+            items_lote_producto.value[i].id_compra = props.is_compra.compra.id;
+        }
+
+        const __lote_productos = items_lote_producto.value.map(item => new LoteProducto(assignObjectNew(item)));
         const lote_producto = new LoteProducto();
         lote_producto.setParameter({
-            lote_productos: __lote_producto.map(item => item.getAttributes()),
+            lote_productos: __lote_productos.map(item => item.getAttributes()),
         });
         let response;
         switch (props.is_action_form) {
@@ -174,7 +196,7 @@ const save = () => {
                 if (response.status) {
                     toastify('success', response.message);
                     emit('toLocalUpdateDataTable', 'new', response.records);
-                    assignRequiredDataForm();
+                    withForm();
                 } else {
                     if (response.validation_errors != undefined) {
                         fields_errors.value = Object.assign({}, response.validation_errors);
@@ -227,7 +249,7 @@ const initListProducto = async () => {
         const list = response.records;
         list_producto.value = list.map(item => ({
             text: `${item.nombre_producto}, ${item.marca}`,
-            img: item.imagen,
+            img: item.img_producto,
             id: item.id
         }));
     } else {
@@ -252,7 +274,7 @@ const asseptDoubleNumber = (event, index, campo) => {
 }
 
 onMounted(async () => {
-    showNumberOfLoteProducto();
+    withForm();
     await initListDeposito();
     await initListProducto();
 });

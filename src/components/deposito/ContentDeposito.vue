@@ -1,16 +1,16 @@
 <template>
-    <div class="ma-3 d-flex">
+    <div class="ma-3 d-flex animate__animated animate__bounceInLeft">
         <div class="d-flex flex-column">
             <v-tooltip text="Actualizar tablero">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" color="amber-darken-3 " variant="elevated" class="ma-1" @click="loadDataTable()"
-                        icon="mdi-table-refresh" />
+                        icon="mdi-refresh" />
                 </template>
             </v-tooltip>
             <v-tooltip text="Nuevo deposito">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" color="amber-darken-3 " variant="elevated" class="ma-1" @click="newForm"
-                        icon="mdi-text-box-plus-outline" />
+                        icon="mdi-plus" />
                 </template>
             </v-tooltip>
         </div>
@@ -41,7 +41,7 @@
             </v-data-table>
         </v-card>
 
-        <v-dialog v-model="dialog_form" persistent  max-width="900px" scrollable>
+        <v-dialog v-model="dialog_form" persistent max-width="900px" scrollable>
             <FormDeposito :is_ciudad="ciudad" :is_item_deposito="item_deposito" @toCloseForm="closeForm"
                 @toUpdateDataTable="updateDataTable" />
         </v-dialog>
@@ -49,7 +49,7 @@
     </div>
 
     <v-dialog v-model="dialog_delete" persistent max-width="500px">
-        <v-card class="animate__animated animate__slideInDown pa-5"  elevation="24">
+        <v-card class="animate__animated animate__slideInDown pa-5" elevation="24">
             <v-card-text class="text-center">
                 <v-icon icon="mdi-trash-can-outline" size="100" color="red"
                     class="animate__animated animate__infinite animate__bounce"></v-icon>
@@ -77,7 +77,7 @@ import Deposito from '@/http/services/Deposito';
 import { useRoute } from 'vue-router';
 import { ref, defineExpose } from 'vue';
 import toastify from '@/composables/toastify';
-
+import { assignObjectNew, assignObjectExists } from '@/util/objectDyl';
 
 //data
 const route = useRoute();
@@ -124,7 +124,7 @@ const clear = () => {
 }
 
 const openDeleteData = (item) => {
-    item_deposito.value = Object.assign({}, item);
+    item_deposito.value = assignObjectNew(item);
     index_data_item.value = data.value.indexOf(item);
     dialog_delete.value = true;
 }
@@ -139,7 +139,7 @@ const closeForm = () => {
 }
 
 const confirmDeleteData = async () => {
-    const deposito = new Deposito(ciudad.value, Object.assign({}, item_deposito.value));
+    const deposito = new Deposito(ciudad.value, assignObjectNew(item_deposito.value));
     const response = await deposito.destroy();
     if (response.status) {
         data.value.splice(index_data_item.value, 1);
@@ -153,12 +153,12 @@ const confirmDeleteData = async () => {
 
 const newForm = () => {
     const deposito = new Deposito();
-    item_deposito.value = Object.assign({}, deposito.getAttributes());
+    item_deposito.value = assignObjectNew(deposito.getAttributes());
     dialog_form.value = true;
 }
 
 const editForm = (item) => {
-    item_deposito.value = Object.assign({}, item);
+    item_deposito.value = assignObjectNew(item);
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
 }
@@ -166,10 +166,10 @@ const editForm = (item) => {
 const updateDataTable = (type, item) => {
     switch (type) {
         case 'new':
-            data.value.push(Object.assign({}, item));
+            data.value.push(assignObjectNew(item));
             break;
         case 'edit':
-            Object.assign(data.value[index_data_item.value], item);
+            assignObjectExists(data.value[index_data_item.value], item);
             break;
         default:
             toastify('danger', 'No se puede reconocer la accion al registrar.');

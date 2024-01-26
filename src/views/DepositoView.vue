@@ -5,7 +5,7 @@
         <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-teal-accent-4 as-box-shadow">
             <v-icon icon="mdi-store"></v-icon>&nbsp;Depositos
         </h1>
-        <v-card class="animate__animated animate__bounceInRight mt-5" >
+        <v-card class="animate__animated animate__bounceInLeft mt-5" elevation="20">
             <v-tabs bg-color="cyan-darken-1"  stacked show-arrows color="light-blue-darken-4"  >
                 <v-tab :to="{ name: 'n-deposito', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
@@ -52,14 +52,16 @@
                     Oruro
                 </v-tab>
             </v-tabs>
-            <MainContentDeposito ref="tableDepositoComponent" />
+            
         </v-card>
+
+        <ContentDeposito ref="tableDepositoComponent" />
     </MainApp>
 </template>
 
 <script setup>
 import MainApp from '@/layouts/MainApp.vue';
-import MainContentDeposito from '@/components/deposito/MainContentDeposito.vue';
+import ContentDeposito from '@/components/deposito/ContentDeposito.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'
 const tableDepositoComponent = ref(null)

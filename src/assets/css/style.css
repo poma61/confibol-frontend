@@ -62,7 +62,7 @@ Estilos generales de la aplicacion
 
 /* navigation -sidebar- top bar */
 .as-navigation-drawer {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
         url(@/assets/images/navigation-drawer.jpg) !important;
     background-size: cover !important;
     background-repeat: none !important;

@@ -31,7 +31,7 @@
                     <template v-slot:item.add_product_lote="{ item }">
                         <v-btn @click="handleComponent('lote-producto', item)" class="ma-1" color="cyan-darken-1"
                             variant="elevated" rounded>
-                            <v-icon icon="mdi-text-box-plus"></v-icon>
+                            <v-icon icon="mdi-package-variant-plus"></v-icon>
                         </v-btn>
                     </template>
 

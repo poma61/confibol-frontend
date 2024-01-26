@@ -1,5 +1,5 @@
 import axios from '@/http/connection/axios';
-import { emptyObject, assignObjectExists, assignObjectPropertyStrict } from '@/util/objectDyl';
+import { emptyObject, assignObjectExists, assignObjectStrict } from '@/util/objectDyl';
 class Service {
     constructor() {
         this.fillable = {};
@@ -38,12 +38,12 @@ class Service {
                     //cuando hay dos parametros la funcion se esta ejecutando de forma recursiva
                     let target = args[0];
                     const source = args[1];
-                    return assignObjectPropertyStrict(target, source);
+                    return assignObjectStrict(target, source);
 
                 } else {
                     //solo un parametro no se ejecuta de forma recursiva
                     let source = args[0];
-                    this.attributes = assignObjectPropertyStrict(this.attributes, source);
+                    this.attributes = assignObjectStrict(this.attributes, source);
                 }
             }//else
            
@@ -138,9 +138,7 @@ class Service {
                 this.config.headers['X-HTTP-Method-Override'] = "PUT";
                 is_method = "post";
             }
-
             this.setParameter(this.getAttributes());
-
             const resolve = await axios[is_method](this.getApi().destroy.url, this.getParameter(), this.config);
             return resolve.data;
 
@@ -170,7 +168,6 @@ class Service {
     getParameter() {
         return this.parameter;
     }
-
 }//class
 export default Service;
 

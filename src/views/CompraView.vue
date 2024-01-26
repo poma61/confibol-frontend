@@ -1,8 +1,8 @@
 
 <template>
     <MainApp>
-        <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-yellow-darken-3 as-box-shadow">
-            <v-icon icon="mdi-cart"></v-icon>&nbsp;Compra
+        <h1 class="animate__animated animate__bounceInRight text-h6 my-3 pa-1 bg-yellow-darken-3 as-box-shadow">
+            <v-icon icon="mdi-cart"></v-icon>&nbsp;Panel de compras
         </h1>
         <v-card class="my-5" elevation="10">
             <v-tabs class="animate__animated animate__bounceInRight" bg-color="light-blue-darken-3" stacked show-arrows color="light-blue-accent-1">
@@ -55,13 +55,13 @@
 
            
         </v-card>
-        <MainContentCompra ref="ComponentMainContentCompra" />
+        <ContentCompra ref="ComponentMainContentCompra" />
     </MainApp>
 </template>
 
 <script setup>
 import MainApp from '@/layouts/MainApp.vue';
-import MainContentCompra from '@/components/compra/MainContentCompra.vue';
+import ContentCompra from '@/components/compra/ContentCompra.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'
 const ComponentMainContentCompra = ref(null)

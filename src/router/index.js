@@ -102,6 +102,22 @@ const routes = [
     ],
   },
 
+
+  {
+    path: '/producto',
+    name: 'n-producto',
+    component: () => import(/* webpackChunkName: "ProductoView" */'@/views/ProductoView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ],
+  },
+
+
 ];//routes
 
 const router = createRouter({

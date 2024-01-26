@@ -22,7 +22,7 @@
         </div>
         <v-card class="mt-1 flex-grow-1" elevation="10">
             <v-card-title class="bg-cyan-darken-1">
-                <v-icon icon="mdi-text-box"></v-icon>&nbsp;<span class="text-h6">Kardex</span>
+                <v-icon icon="mdi-package-variant"></v-icon>&nbsp;<span class="text-h6">Kardex</span>
             </v-card-title>
             <v-card-text>
                 <div class="ma-5 d-flex justify-center align-center">
@@ -61,25 +61,20 @@
                 color="cyan-darken-1" />
             <v-data-table class="my-3" :hover="true" :items="data" :headers="columns" :search="search_data"
                 :loading="loading_data_table" :items-per-page-options="items_per_page_options" :show-current-page="true"
-                :fixed-header="true" :height="500" :sort-by="[{ key: 'id', order: 'desc' }]">
+                :fixed-header="true" :height="500" :sort-by="[{ key: 'fecha_vencimiento', order: 'asc' }]">
 
                 <template v-slot:loading>
                     <v-skeleton-loader type="table-row@13"></v-skeleton-loader>
                 </template>
 
-                <template v-slot:item.details="{ item }">
-                    <v-btn icon="mdi-text-box" @click="showItem(item)" color="success" class="ma-1" />
+                <template v-slot:item.img_producto="{ item }">
+                    <v-avatar :image="app.BASE_URL + item.img_producto" size="64" class="ma-2" />
                 </template>
 
                 <template v-slot:item.costo_unitario="{ item }">
                     <v-chip color="orange-darken-4">
                         Bs. {{ item.costo_unitario.toFixed(2) }}
                     </v-chip>
-                </template>
-
-                <template v-slot:item.descripcion="{ item }">
-                    <p class="text-warning" v-if="item.descripcion == null || item.descripcion == ''">Sin descripcion!</p>
-                    <p v-else>{{ item.descripcion }}</p>
                 </template>
 
                 <template v-slot:item.fecha_vencimiento="{ item }">
@@ -120,7 +115,7 @@
                     <v-btn color="red" variant="elevated" @click="closeDeleteData" class="ma-1">
                         <v-icon icon="mdi-cancel"></v-icon>&nbsp;Cancelar
                     </v-btn>
-                    <v-btn color="deep-purple-lighten-1" variant="elevated" class="ma-1" @click="confirmDeleteData()">
+                    <v-btn color="success" variant="elevated" class="ma-1" @click="confirmDeleteData()">
                         <v-icon icon="mdi-check-circle"></v-icon>&nbsp;Si
                     </v-btn>
                 </div>
@@ -136,6 +131,7 @@ import { ref, defineProps, defineEmits, onMounted } from 'vue';
 import toastify from '@/composables/toastify';
 import FormatDateDyl from '@/util/FormatDateDyl';
 import { assignObjectNew, assignObjectExists } from '@/util/objectDyl';
+import app from '@/config/app';
 
 //props y emits
 const props = defineProps(['is_compra']);
@@ -155,10 +151,10 @@ const items_per_page_options = ref([
 ]);
 const columns = ref([
     { title: 'Producto', key: 'producto', value: item => `${item.nombre_producto}, ${item.marca}` },
+    { title: 'Producto Imagen', key: 'img_producto' },
     { title: 'Codigo', key: 'codigo' },
     { title: 'Fecha de vencimiento', key: 'fecha_vencimiento' },
     { title: 'Peso neto', key: 'peso', value: item => `${item.peso_neto} ${item.unidad_medida_peso_neto}` },
-    { title: 'Descripcion', key: 'descripcion' },
     { title: 'Cantidad', key: 'cantidad' },
     { title: 'Costo unitario', key: 'costo_unitario' },
     { title: 'Deposito', key: 'deposito', value: item => `${item.nombre_deposito}, ${item.ciudad}` },

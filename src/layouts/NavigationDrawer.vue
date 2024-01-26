@@ -28,8 +28,8 @@
                     :to="{ name: 'n-deposito', params: { ciudad: 'la-paz' } }"
                     :class="{ 'v-list-item--active': route.name == 'n-deposito' }" />
 
-                <v-list-item prepend-icon="mdi-package-variant" title="Productos" value="Productos" />
-                <v-list-item prepend-icon="mdi-file-table-box-outline" title="Categorias" value="Categorias" />
+                <v-list-item prepend-icon="mdi-list-box-outline" title="Productos" value="Productos"  
+                :to="{ name: 'n-producto' }"/>
 
                 <v-divider class="border-opacity-25 my-2"></v-divider>
                 <p class="text-subtitle-1 font-weight-bold">ADMINISTRACION</p>
