@@ -67,8 +67,8 @@
                     <v-skeleton-loader type="table-row@13"></v-skeleton-loader>
                 </template>
 
-                <template v-slot:item.img_producto="{ item }">
-                    <v-avatar :image="app.BASE_URL + item.img_producto" size="64" class="ma-2" />
+                <template v-slot:item.image_path="{ item }">
+                    <v-avatar :image="app.BASE_URL + item.image_path" size="64" class="ma-2" />
                 </template>
 
                 <template v-slot:item.costo_unitario="{ item }">
@@ -151,7 +151,7 @@ const items_per_page_options = ref([
 ]);
 const columns = ref([
     { title: 'Producto', key: 'producto', value: item => `${item.nombre_producto}, ${item.marca}` },
-    { title: 'Producto Imagen', key: 'img_producto' },
+    { title: 'Producto Imagen', key: 'image_path' },
     { title: 'Codigo', key: 'codigo' },
     { title: 'Fecha de vencimiento', key: 'fecha_vencimiento' },
     { title: 'Peso neto', key: 'peso', value: item => `${item.peso_neto} ${item.unidad_medida_peso_neto}` },

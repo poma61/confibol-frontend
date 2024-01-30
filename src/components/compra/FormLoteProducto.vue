@@ -256,7 +256,7 @@ const initListProducto = async () => {
         const list = response.records;
         list_producto.value = list.map(item => ({
             text: `${item.nombre_producto}, ${item.marca}`,
-            img: item.img_producto,
+            img: item.image_path,
             id: item.id
         }));
     } else {

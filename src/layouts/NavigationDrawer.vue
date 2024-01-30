@@ -19,7 +19,7 @@
 
                 <v-divider class="border-opacity-25 my-2"></v-divider>
                 <p class="text-subtitle-1 font-weight-bold">ALMACEN</p>
-                
+
                 <v-list-item prepend-icon="mdi-cart-outline" title="Compras" value="Compras"
                     :to="{ name: 'n-compra', params: { ciudad: 'la-paz' } }"
                     :class="{ 'v-list-item--active': route.name == 'n-compra' }" />
@@ -28,13 +28,23 @@
                     :to="{ name: 'n-deposito', params: { ciudad: 'la-paz' } }"
                     :class="{ 'v-list-item--active': route.name == 'n-deposito' }" />
 
-                <v-list-item prepend-icon="mdi-list-box-outline" title="Productos" value="Productos"  
-                :to="{ name: 'n-producto' }"/>
+                <v-list-item prepend-icon="mdi-list-box-outline" title="Productos" value="Productos"
+                    :to="{ name: 'n-producto' }" />
+
+                <v-divider class="border-opacity-25 my-2"></v-divider>
+                <p class="text-subtitle-1 font-weight-bold">CONSUMIDOR</p>
+                <v-list-item prepend-icon="mdi-select-group" title="Grupos" value="Grupos"
+                    :to="{ name: 'n-grupo', params: { ciudad: 'la-paz' } }"
+                    :class="{ 'v-list-item--active': route.name == 'n-grupo' }" />
+
+                <v-list-item prepend-icon="mdi-account-group" title="Clientes" value="Clientes"
+                    :to="{ name: 'n-cliente', params: { ciudad: 'la-paz' } }"
+                    :class="{ 'v-list-item--active': route.name == 'n-cliente' }" />
 
                 <v-divider class="border-opacity-25 my-2"></v-divider>
                 <p class="text-subtitle-1 font-weight-bold">ADMINISTRACION</p>
-                <v-list-item prepend-icon="mdi mdi-account-group" title="Personal" value="Personal" />
-                <v-list-item prepend-icon="mdi mdi-account" title="Usuarios" value="Usuarios" />
+                <v-list-item prepend-icon="mdi-home-account" title="Personal" value="Personal" />
+                <v-list-item prepend-icon="mdi-account-circle-outline" title="Usuarios" value="Usuarios" />
 
             </v-list>
         </v-navigation-drawer>
@@ -84,5 +94,4 @@ const auth = async () => {
 onMounted(() => {
     auth();
 });
-
 </script>

@@ -21,6 +21,7 @@ const routes = [
       middleware(authenticate),
     ]
   },
+
   {
     path: '/',
     name: 'n-login',
@@ -36,19 +37,6 @@ const routes = [
   },
 
   {
-    path: '/inicio',
-    name: 'n-inicio',
-    component: InicioView,
-    meta: {
-      requireAuth: true
-    },
-    beforeEnter: [
-      middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
-      middleware(authenticate),
-    ]
-  },
-  {
     path: '/perfil',
     name: 'n-perfil',
     component: ProfileView,
@@ -61,10 +49,25 @@ const routes = [
       middleware(authenticate),
     ],
   },
+
   {
-    path: '/compra',
-    name: 'n-compra',
-    component: () => import(/* webpackChunkName: "CompraView" */'@/views/CompraView.vue'),
+    path: '/inicio',
+    name: 'n-inicio',
+    component: InicioView,
+    meta: {
+      requireAuth: true
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ]
+  },
+
+  {
+    path: '/deposito/:ciudad',
+    name: 'n-deposito',
+    component: () => import(/* webpackChunkName: "DepositoView" */'@/views/DepositoView.vue'),
     meta: {
       requireAuth: true,
     },
@@ -74,10 +77,11 @@ const routes = [
       middleware(authenticate),
     ],
   },
+
   {
-    path: '/deposito/:ciudad',
-    name: 'n-deposito',
-    component: () => import(/* webpackChunkName: "DepositoView" */'@/views/DepositoView.vue'),
+    path: '/compra',
+    name: 'n-compra',
+    component: () => import(/* webpackChunkName: "CompraView" */'@/views/CompraView.vue'),
     meta: {
       requireAuth: true,
     },
@@ -102,7 +106,6 @@ const routes = [
     ],
   },
 
-
   {
     path: '/producto',
     name: 'n-producto',
@@ -117,6 +120,33 @@ const routes = [
     ],
   },
 
+  {
+    path: '/grupo/:ciudad',
+    name: 'n-grupo',
+    component: () => import(/* webpackChunkName: "GrupoView" */'@/views/GrupoView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ],
+  },
+
+  {
+    path: '/cliente/:ciudad',
+    name: 'n-cliente',
+    component: () => import(/* webpackChunkName: "ClienteView" */'@/views/ClienteView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ],
+  },
 
 ];//routes
 
