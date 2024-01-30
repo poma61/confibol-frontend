@@ -30,7 +30,7 @@ class Grupo extends Service {
 
     async list() {
         try {
-            const resolve = await axios.post("/grupo/listar", this.config);
+            const resolve = await axios.post("/grupo/listar", this.getParameter(), this.config);
             return resolve.data;
 
         } catch (error) {

@@ -2,11 +2,11 @@
 
 <template>
     <MainApp>
-        <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-teal-accent-4 as-box-shadow">
+        <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-deep-purple-lighten-1 as-box-shadow">
             <v-icon icon="mdi-account-group"></v-icon>&nbsp;Panel de clientes
         </h1>
         <v-card class="animate__animated animate__bounceInLeft mt-5" elevation="20">
-            <v-tabs bg-color="cyan-darken-1" stacked show-arrows color="light-blue-darken-4">
+            <v-tabs bg-color="blue-grey-lighten-1" stacked show-arrows color="blue-grey-lighten-4">
                 <v-tab :to="{ name: 'n-cliente', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
                     La Paz
@@ -55,27 +55,26 @@
 
         </v-card>
 
-        <!-- <ContentDeposito ref="tableDepositoComponent" /> -->
+        <ContentCliente ref="componentCliente" />
     </MainApp>
 </template>
 
 <script setup>
-// importar el componente cliente
 import MainApp from '@/layouts/MainApp.vue';
-import ContentDeposito from '@/components/deposito/ContentDeposito.vue';
+import ContentCliente from '@/components/cliente/ContentCliente.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'
-const tableDepositoComponent = ref(null)
+const componentCliente = ref(null)
 const route = useRoute();
 
 watch(() => route.params.ciudad, async (new_ciudad) => {
-    // tableDepositoComponent.value.witchParamsRoute(new_ciudad);
-    // await tableDepositoComponent.value.loadDataTable();
+    componentCliente.value.witchParamsRoute(new_ciudad);
+    await componentCliente.value.loadDataTable();
 });
 
 onMounted(async () => {
-    // tableDepositoComponent.value.witchParamsRoute(route.params.ciudad);
-    // await tableDepositoComponent.value.loadDataTable();
+    componentCliente.value.witchParamsRoute(route.params.ciudad);
+    await componentCliente.value.loadDataTable();
 });
 </script>
 
