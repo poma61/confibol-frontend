@@ -4,13 +4,6 @@
             <v-icon icon="mdi-account-group"></v-icon>&nbsp;<span class="text-h6">Registrar cliente</span>
         </v-card-title>
         <v-card-text class="pa-3">
-            <v-overlay v-model="loading_list_grupo" class="d-flex align-center justify-center" persistent contained>
-                <div class="text-center">
-                    <v-progress-circular color="yellow-darken-3" indeterminate size="100"></v-progress-circular>
-                    <p class="text-h6 text-white">Cargando modulos necesarios...</p>
-                </div>
-            </v-overlay>
-
             <p class="text-warning text-subtitle-1">Los campos marcados con (*) son obligatorios.</p>
             <v-row>
                 <!-- sm => es cuando en modo responsivo se aplica desde 600px aproximadamente-->
@@ -38,8 +31,6 @@
                 <v-col cols="12" sm="6">
                     <v-autocomplete label="Grupo (*)" v-model="item_cliente.id_grupo" :items="list_grupo" item-value="id"
                         item-title="text" color="primary" clearable :error-messages="showFieldsErrors('id_grupo')">
-
-                      
                         <template v-slot:item="{ props, item }">
                             <v-list-item v-bind="props" :title="item.raw.text"></v-list-item>
                         </template>
@@ -58,7 +49,7 @@
 
                 <v-col cols="12" sm="6">
                     <v-autocomplete :items="['SC', 'CH', 'CB', 'PT', 'BN', 'LP', 'PA', 'TJ', 'OR', 'SinExp']"
-                        v-model="item_cliente.ci_expdido" label="Expedido (*)" color="light-blue-darken-3" clearable
+                        v-model="item_cliente.ci_expedido" label="Expedido (*)" color="light-blue-darken-3" clearable
                         :error-messages="showFieldsErrors('ci_expedido')" />
                 </v-col>
 
@@ -71,13 +62,11 @@
                     <v-textarea v-model="item_cliente.descripcion" label="Descripcion (*)" color="light-blue-darken-3"
                         clearable :error-messages="showFieldsErrors('descripcion')" rows="3" />
                 </v-col>
-
-
             </v-row>
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="red" variant="tonal" @click="emit('toCloseForm')" :loading="loading_btn">
+            <v-btn color="red" variant="tonal" @click="emit('toCloseForm')">
                 <v-icon icon="mdi-cancel"></v-icon>&nbsp;Cancelar
             </v-btn>
             <v-btn color="light-blue-darken-3" variant="tonal" @click="save()" :loading="loading_btn">
@@ -85,6 +74,12 @@
             </v-btn>
         </v-card-actions>
     </v-card>
+    <v-overlay v-model="loading_list_grupo" class="d-flex align-center justify-center" persistent>
+        <div class="text-center">
+            <v-progress-circular color="yellow-darken-3" indeterminate size="100"></v-progress-circular>
+            <p class="text-h6 text-white">Cargando modulos necesarios...</p>
+        </div>
+    </v-overlay>
 </template>
 
 <script setup>
@@ -143,7 +138,7 @@ const save = () => {
             loading_btn.value = false;
             if (response.status) {
                 toastify('success', response.message);
-                emit('toUpdateDataTable', 'edit', response.record);
+                emit('toLocalUpdateDataTable', 'edit', response.record);
                 emit('toCloseForm');
             } else {
                 if (response.validation_errors != undefined) {
@@ -157,7 +152,7 @@ const save = () => {
             loading_btn.value = false;
             if (response.status) {
                 toastify('success', response.message);
-                emit('toUpdateDataTable', 'new', response.record);
+                emit('toLocalUpdateDataTable', 'new', response.record);
                 emit('toCloseForm');
             } else {
                 if (response.validation_errors != undefined) {

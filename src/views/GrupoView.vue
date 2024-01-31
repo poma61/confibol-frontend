@@ -6,7 +6,7 @@
             <v-icon icon="mdi-select-group"></v-icon>&nbsp;Panel de grupos
         </h1>
         <v-card class="animate__animated animate__bounceInLeft mt-5" elevation="20">
-            <v-tabs bg-color="indigo-lighten-1" show-arrows color="indigo-lighten-4">
+            <v-tabs bg-color="indigo-lighten-1" stacked show-arrows color="indigo-lighten-4">
                 <v-tab :to="{ name: 'n-grupo', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
                     La Paz

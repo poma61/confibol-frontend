@@ -6,7 +6,7 @@
             <v-icon icon="mdi-account-group"></v-icon>&nbsp;Panel de clientes
         </h1>
         <v-card class="animate__animated animate__bounceInLeft mt-5" elevation="20">
-            <v-tabs bg-color="blue-grey-lighten-1" stacked show-arrows color="blue-grey-lighten-4">
+            <v-tabs bg-color="blue-grey-lighten-1"  show-arrows color="blue-grey-lighten-4">
                 <v-tab :to="{ name: 'n-cliente', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
                     La Paz

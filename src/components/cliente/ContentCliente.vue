@@ -1,35 +1,70 @@
 <template>
-    <div class="my-3 d-flex flex-wrap animate__animated animate__bounceInLeft">
+    <div class="mt-3 d-flex flex-wrap animate__animated animate__bounceInLeft">
         <v-btn color="light-blue-darken-3" variant="tonal" class="ma-1" @click="loadDataTable()">
             <v-icon icon="mdi-refresh" />&nbsp;actualizar tablero
         </v-btn>
-
+        <v-btn color="light-blue-darken-3" variant="tonal" class="ma-1" @click="clear()">
+            <v-icon icon="mdi-delete" />&nbsp;Limpiar
+        </v-btn>
         <v-btn color="light-blue-darken-3" variant="tonal" class="ma-1" @click="newForm">
             <v-icon icon="mdi-plus" />&nbsp; nuevo registro
         </v-btn>
     </div>
 
-    <v-card class="my-2 animate__animated animate__bounceInLeft">
+    <div class="pa-1 animate__animated animate__bounceInLeft">
+        <p class="text-secondary">Detalles del cliente</p>
+        <v-row>
+            <!-- sm => es cuando en modo responsivo se aplica desde 600px aproximadamente-->
+            <!-- md=> es cuando en modo responsivo se aplica desde 800px aproximadamente   -->
+            <v-col cols="12" sm="3">
+                <v-textarea :model-value="nombreCompletoCliente" label="Nombre completo" color="light-blue-darken-3"
+                    readonly rows="2" />
+            </v-col>
+            <v-col cols="12" sm="3">
+                <v-textarea :model-value="item_cliente.nombre_grupo" label="Grupo" color="light-blue-darken-3" readonly
+                    rows="2" />
+            </v-col>
+
+            <v-col cols="12" sm="3">
+                <v-textarea :model-value="item_cliente.direccion" label="Direccion" color="light-blue-darken-3" readonly
+                    rows="2" />
+            </v-col>
+
+            <v-col cols="12" sm="3">
+                <v-textarea :model-value="item_cliente.descripcion" label="Descripcion" color="light-blue-darken-3" readonly
+                    rows="2" />
+            </v-col>
+
+        </v-row>
+    </div>
+
+    <v-card class="animate__animated animate__bounceInLeft">
         <v-text-field v-model="search_data" append-inner-icon="mdi-magnify" clearable label="Buscar Registros..."
-            color="light-blue-darken-3 " />
+            color="light-blue-darken-3" />
         <v-data-table :hover="true" :items="data" :headers="columns" :search="search_data" :loading="loading_data_table"
-            :items-per-page-options="items_per_page_options" :show-current-page="true" :fixed-header="true" :height="550"
+            :items-per-page-options="items_per_page_options" :show-current-page="true" :fixed-header="true" :height="450"
             :sort-by="[{ key: 'id', order: 'desc' }]">
 
             <template v-slot:loading>
                 <v-skeleton-loader type="table-row@13"></v-skeleton-loader>
             </template>
 
+            <template v-slot:item.correo_electronico="{ item }">
+                <p class="text-warning" v-if="item.correo_electronico == null || item.correo_electronico == ''">Sin correo
+                    electronico!</p>
+                <p v-else>{{ item.correo_electronico }}</p>
+            </template>
+
             <template v-slot:item.actions="{ item }">
-                <div style="min-width: 150px;">
+                <div style="min-width: 200px;">
+                    <v-btn @click="showDetailsCliente(item)" class="ma-1" color="light-blue-darken-3"
+                        icon="mdi-card-text-outline" variant="tonal" />
                     <v-btn @click="editForm(item)" class="ma-1" color="secondary" icon="mdi-pencil" variant="tonal" />
                     <v-btn @click="openDeleteData(item)" class="ma-1" color="red" icon="mdi-delete" variant="tonal" />
                 </div>
             </template>
-
         </v-data-table>
     </v-card>
-
     <v-dialog v-model="dialog_form" persistent max-width="1200px" scrollable>
         <FormCliente :is_ciudad="ciudad" :is_item_cliente="item_cliente" @toCloseForm="closeForm"
             @toLocalUpdateDataTable="localUpdateDataTable" />
@@ -56,13 +91,11 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
-
-
 </template>
 <script setup>
 import FormCliente from '@/components/cliente/FormCliente.vue';
 import Cliente from '@/http/services/Cliente';
-import { ref, defineExpose } from 'vue';
+import { ref, defineExpose, computed } from 'vue';
 import toastify from '@/composables/toastify';
 import { assignObjectNew, assignObjectExists } from '@/util/objectDyl';
 
@@ -80,11 +113,22 @@ const items_per_page_options = ref([
     { value: 50, title: '50' },
 ]);
 const columns = ref([
-    { title: 'Cliente', key: 'nombre_grupo', },
-    { title: 'Descripcion', key: 'descripcion', },
+    { title: 'Nombres', key: 'nombres', },
+    { title: 'Apellido paterno', key: 'apellido_paterno', },
+    { title: 'Apellido materno', key: 'apellido_materno', },
+    { title: 'N° de contacto', key: 'n_de_contacto', },
+    { title: 'Correo electronico', key: 'correo_electronico', },
+    { title: 'C.I.', key: 'ci', value: (item) => `${item.ci} ${item.ci_expedido}` },
     { title: 'Acciones', key: 'actions', },
 ]);
 const data = ref([]);
+
+const nombreCompletoCliente = computed(() => {
+    if (item_cliente.value.nombres != undefined || item_cliente.value.apellido_paterno != undefined || item_cliente.value.apellido_materno != undefined) {
+        return `${item_cliente.value.nombres} ${item_cliente.value.apellido_paterno} ${item_cliente.value.apellido_materno}`
+    }
+    return "";
+});
 
 //methods
 const loadDataTable = () => {
@@ -107,7 +151,9 @@ const clear = () => {
 }
 
 const openDeleteData = (item) => {
-    item_cliente.value = assignObjectNew(item);
+    //solo asignamos el id, porque al asginar el objeto item, en la vista se mostrara en detalles del cliente
+    // los datos y no se ve vistoso entonces para evitar eso asignamos solo el id del registro
+    item_cliente.value = assignObjectNew({ id: item.id });
     index_data_item.value = data.value.indexOf(item);
     dialog_delete.value = true;
 }
@@ -140,9 +186,15 @@ const newForm = () => {
 }
 
 const editForm = (item) => {
-    item_cliente.value = assignObjectNew(item);
+    const cliente = new Cliente();
+    cliente.setAttributes(assignObjectNew(item));
+    item_cliente.value = assignObjectNew(cliente.getAttributes());
     index_data_item.value = data.value.indexOf(item);
     dialog_form.value = true;
+}
+
+const showDetailsCliente = (item) => {
+    item_cliente.value = assignObjectNew(item);
 }
 
 const localUpdateDataTable = (type, item) => {
