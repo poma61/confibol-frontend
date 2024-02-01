@@ -43,7 +43,10 @@
 
                 <v-divider class="border-opacity-25 my-2"></v-divider>
                 <p class="text-subtitle-1 font-weight-bold">ADMINISTRACION</p>
-                <v-list-item prepend-icon="mdi-home-account" title="Personal" value="Personal" />
+                <v-list-item prepend-icon="mdi-home-account" title="Personal" value="Personal"
+                    :to="{ name: 'n-personal', params: { ciudad: 'la-paz' } }"
+                    :class="{ 'v-list-item--active': route.name == 'n-personal' }" />
+
                 <v-list-item prepend-icon="mdi-account-circle-outline" title="Usuarios" value="Usuarios" />
 
             </v-list>

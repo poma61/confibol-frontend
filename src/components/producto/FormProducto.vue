@@ -25,9 +25,9 @@
                             :error-messages="showFieldsErrors('categoria')" :items="list_categoria" />
                     </v-col>
 
-                    <v-col cols="12" >
+                    <v-col cols="12">
                         <v-file-input accept="image/*" label="Imagen del producto (*)" color="light-blue-darken-4"
-                            :error-messages="showFieldsErrors('image_file')" v-model="is_file" @change="uploadImage"
+                            :error-messages="showFieldsErrors('image_file')" v-model="file" @change="uploadImage"
                             :clearable="false">
                             <template v-slot:append>
                                 <v-btn v-bind="props" icon="mdi-camera" color="success" @click="openCamera"></v-btn>
@@ -42,8 +42,6 @@
                             </v-img>
                         </div>
                     </v-col>
-
-
                 </v-row>
             </v-form>
         </v-card-text>
@@ -67,9 +65,13 @@
             <v-card-text>
                 <Camera ref="camera" :autoplay="false"></Camera>
 
-                <v-select :items="devices_camera.label" label="Dispositivos de camara" color="light-blue-accent-4"
-                    v-model="selected_device_camera.label" @update:model-value="changeDeviceCamera"
-                    :error-messages="selected_device_camera.active ? '' : 'No hay dispositivos de camara.'" />
+                <v-select label="Dispositivos de camara" :items="devices_camera" item-value="deviceId" item-title="label"
+                    color="light-blue-accent-4" @update:model-value="changeDeviceCamera($event)"
+                    :error-messages="devices_camera.length == 0 ? 'No hay dispositivos de camara.' : ''">
+                    <template v-slot:item="{ props, item }">
+                        <v-list-item v-bind="props" :title="item.raw.label"></v-list-item>
+                    </template>
+                </v-select>
 
             </v-card-text>
             <v-card-actions>
@@ -79,10 +81,9 @@
                 </v-btn>
 
                 <v-btn color="success" variant="elevated" @click="capturePhoto"
-                    :disabled="!selected_device_camera.active ? true : false">
+                    :disabled="devices_camera.length == 0 ? true : false">
                     <v-icon icon="mdi-camera"></v-icon>&nbsp;Tomar foto
                 </v-btn>
-
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -98,7 +99,7 @@ import app from '@/config/app';
 
 //props y emit
 const props = defineProps(['is_item_producto']);
-const emit = defineEmits(['toLocalUpdateDataTable', 'toNewForm']);
+const emit = defineEmits(['toLocalUpdateDataIterator', 'toNewForm']);
 
 
 //data
@@ -106,14 +107,10 @@ const fields_errors = ref({});
 const item_producto = ref(props.is_item_producto);
 const loading_btn = ref(false);
 const dialog_camera = ref(false);
-const devices_camera = ref({
-    label: [],
-    device: []
-});
-const selected_device_camera = ref({ active: false, label: "" });
+const devices_camera = ref([]);
 const camera = ref(null);
 const src_image = ref(null);
-const is_file = ref([]);
+const file = ref([]);
 
 const list_categoria = ref([
     'Pasteleria',
@@ -144,21 +141,20 @@ const showFieldsErrors = computed(() => {
     }
 });
 
-
 const clear = () => {
     fields_errors.value = {};
     src_image.value = null;
-    is_file.value = [];
+    file.value = [];
 }
 
 const uploadImage = () => {
     //Si el usuario carga la imagen desde el dispositvo entonces asignamos la imagen
     // a  item_producto.value.image_file y mostramos dicha imagen 
-    const file = is_file.value[0];
-    if (file) {
-        item_producto.value.image_file = file;//cargamos el archivo
+    const archivo = file.value[0];
+    if (archivo) {
+        item_producto.value.image_file = archivo;//cargamos el archivo
         const reader = new FileReader();
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(archivo);
         reader.onload = (e) => {
             src_image.value = e.target.result;
         };
@@ -168,69 +164,50 @@ const uploadImage = () => {
 const openCamera = async () => {
     dialog_camera.value = true;
     // Esperar al próximo ciclo de renderización
+    //espera que se renderize el componente <Camera></Camera>
     await nextTick();
-    camera.value.start();
-    listDeviceCamera();
-};
+    //espera que inicie la camara
+    await camera.value.start();
+    // lista otras camaras
+    devices_camera.value = await camera.value.devices(["videoinput"]);
+    //verificamos si se encontraron camaras
+    if (devices_camera.value.length == 0) {
+        toastify('danger', 'No hay dispositvos de camara.')
+    }
+}
 
 const capturePhoto = async () => {
     //si el usuario decide tomar una foto con la camara
     //capturamos la foto/imagem y  asignamos la imagen
     // a  item_producto.value.image_file y mostramos dicha imagen 
     if (camera.value != null) {
-        const blob = await camera.value.snapshot({ width: 800, height: 800 }, "image/jpeg");
+        const blob = await camera.value.snapshot({ width: 800, height: 600 }, "image/jpeg");
         if (blob) {
-            src_image.value = blob;
             src_image.value = URL.createObjectURL(blob);
-            const file = new File([blob], "fotografia", { type: blob.type });
-            item_producto.value.image_file = file;//cargamos el archivo
+            const archivo = new File([blob], "fotografia", { type: blob.type });
+            item_producto.value.image_file = archivo;//cargamos el archivo
         } else {
             toastify('warning', "Error al capturar foto!")
         }
     }
     closeCamera();
-};
+}
 
 //para cerrar la camara
 const closeCamera = () => {
-    if (camera.value != null) {
+    if (camera.value == null) {
+        toastify('danger', 'No pudo detener la camara. El componente Camera es nulo.')
+    } else {
         camera.value.stop();
     }
-    devices_camera.value.label = [];
-    devices_camera.value.device = [];
-    selected_device_camera.value = { active: false, label: "" };
+    devices_camera.value = [];
     dialog_camera.value = false;
 }
 
-//para listar los dispositovos de camara
-const listDeviceCamera = async () => {
-    const devices = await camera.value.devices(["videoinput"]);
-    for (let i = 0; i < devices.length; i++) {
-        devices_camera.value.label.push(devices[i].label);
-        devices_camera.value.device.push(devices[i]);
-    }
-    //verificamos si se encontraron camaras
-    if (devices.length > 0) {
-        selected_device_camera.value.label = devices_camera.value.label[0];
-        selected_device_camera.value.active = true;
-    } else {
-        toastify('danger', 'No hay dispositvos de camara.')
-    }
+//para cambiar de camara, si esque hay mas de una camara
+const changeDeviceCamera = async (device_id) => {
+    await camera.value.changeCamera(device_id);
 }
-
-//para cambiar de camara, si esque hay mas d euna camara
-const changeDeviceCamera = async () => {
-    for (let i = 0; i < devices_camera.value.device.length; i++) {
-        //compara la camara selecciona de v-select con las camaras almacenadas en  devices_camera
-        if (selected_device_camera.value.label == devices_camera.value.device[i].label) {
-            //esperamos que se active la camara seleccionada
-            await camera.value.changeCamera(devices_camera.value.device[i].deviceId);
-            //si se selecciona una camara salimos del ciclo for
-            break;
-        }
-    }
-}
-
 
 const save = () => {
     loading_btn.value = true;
@@ -243,7 +220,7 @@ const save = () => {
             loading_btn.value = false;
             if (response.status) {
                 toastify('success', response.message);
-                emit('toLocalUpdateDataTable', 'edit', response.record)
+                emit('toLocalUpdateDataIterator', 'edit', response.record)
                 fields_errors.value = {};
             } else {
                 if (response.validation_errors != undefined) {
@@ -255,10 +232,10 @@ const save = () => {
             //cuando es store o nuevo registro
             const response = await producto.store();
             loading_btn.value = false;
-        
+
             if (response.status) {
                 toastify('success', response.message);
-                emit('toLocalUpdateDataTable', 'new', response.record);
+                emit('toLocalUpdateDataIterator', 'new', response.record);
                 emit('toNewForm');
             } else {
                 if (response.validation_errors != undefined) {

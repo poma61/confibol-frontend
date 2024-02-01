@@ -120,7 +120,7 @@
             <!-- iterator -->
 
             <FormProducto v-if="component_show.form" :is_item_producto="item_producto"
-                @toLocalUpdateDataTable="localUpdateDataTable" @toNewForm="newForm" />
+                @toLocalUpdateDataIterator="localUpdateDataIterator" @toNewForm="newForm" />
         </div>
 
     </div>
@@ -228,7 +228,7 @@ const editForm = (item) => {
     handleComponent('form');
 }
 
-const localUpdateDataTable = (type, item) => {
+const localUpdateDataIterator = (type, item) => {
     switch (type) {
         case 'new':
             data.value.push(assignObjectNew(item));
@@ -237,7 +237,7 @@ const localUpdateDataTable = (type, item) => {
             assignObjectExists(data.value[index_item.value], item);
             break;
         default:
-            toastify('warning', 'Error en el metodo localUpdateDataTable!');
+            toastify('warning', 'Error en el metodo localUpdateDataIterator!');
             break;
     }
 }

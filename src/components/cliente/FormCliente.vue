@@ -1,5 +1,5 @@
 <template>
-    <v-card class="animate__animated animate__flipInX" elevation="24">
+    <v-card class="animate__animated animate__bounceInUp" elevation="24">
         <v-card-title class="bg-light-blue-darken-3">
             <v-icon icon="mdi-account-group"></v-icon>&nbsp;<span class="text-h6">Registrar cliente</span>
         </v-card-title>

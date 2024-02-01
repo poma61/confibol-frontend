@@ -148,6 +148,20 @@ const routes = [
     ],
   },
 
+  {
+    path: '/personal/:ciudad',
+    name: 'n-personal',
+    component: () => import(/* webpackChunkName: "PersonalView" */'@/views/PersonalView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+    ],
+  },
+
 ];//routes
 
 const router = createRouter({

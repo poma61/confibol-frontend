@@ -24,7 +24,6 @@ class Producto extends Service {
         this.config = {
             headers: {
                 'Assept': 'application/json',
-                // 'Content-Type': 'application/json'
                 'Content-Type': 'multipart/form-data'// de esta forma podemos enviar imagenes
             }
         };

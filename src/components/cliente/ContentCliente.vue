@@ -57,10 +57,26 @@
 
             <template v-slot:item.actions="{ item }">
                 <div style="min-width: 200px;">
-                    <v-btn @click="showDetailsCliente(item)" class="ma-1" color="light-blue-darken-3"
-                        icon="mdi-card-text-outline" variant="tonal" />
-                    <v-btn @click="editForm(item)" class="ma-1" color="secondary" icon="mdi-pencil" variant="tonal" />
-                    <v-btn @click="openDeleteData(item)" class="ma-1" color="red" icon="mdi-delete" variant="tonal" />
+                    <v-tooltip text="Ver detalles">
+                        <template v-slot:activator="{ props }">
+                            <v-btn v-bind="props" @click="showDetailsCliente(item)" class="ma-1" color="light-blue-darken-3"
+                                icon="mdi-card-text-outline" variant="tonal" />
+                        </template>
+                    </v-tooltip>
+
+                    <v-tooltip text="Editar registro">
+                        <template v-slot:activator="{ props }">
+                            <v-btn v-bind="props" @click="editForm(item)" class="ma-1" color="secondary" icon="mdi-pencil"
+                                variant="tonal" />
+                        </template>
+                    </v-tooltip>
+
+                    <v-tooltip text="Eliminar registro">
+                        <template v-slot:activator="{ props }">
+                            <v-btn v-bind="props" @click="openDeleteData(item)" class="ma-1" color="red" icon="mdi-delete"
+                                variant="tonal" />
+                        </template>
+                    </v-tooltip>
                 </div>
             </template>
         </v-data-table>
@@ -132,6 +148,7 @@ const nombreCompletoCliente = computed(() => {
 
 //methods
 const loadDataTable = () => {
+    clear();
     const cliente = new Cliente(ciudad.value);
     loading_data_table.value = 'light-blue-darken-3';
     setTimeout(async () => {
