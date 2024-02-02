@@ -14,16 +14,20 @@
 
                     <v-col cols="12">
                         <v-text-field v-model="item_usuario.password" label="Contraseña (*)" color="light-blue-accent-4"
-                            clearable :error-messages="showFieldsErrors('password')" variant="underlined" 
-                            :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
-                            autocomplete="off" @click:append-inner="show = !show" />
+                            clearable :error-messages="showFieldsErrors('password')" variant="underlined"
+                            :append-inner-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="show_password ? 'text' : 'password'" autocomplete="off"
+                            @click:append-inner="show_password = !show_password" />
                     </v-col>
+
                     <v-col cols="12">
-                        <v-radio-group v-model="item_usuario.rol_name" label="Rol (*)"
-                            :error-messages="showFieldsErrors('rol_name')">
-                            <v-radio label="usuario" value="usuario" color="light-blue-accent-4"></v-radio>
-                            <v-radio label="administrador" value="administrador" color="light-blue-accent-4"></v-radio>
-                        </v-radio-group>
+                        <v-autocomplete label="Rol (*)" v-model="item_usuario.id_role" :items="list_role" item-value="id"
+                            item-title="text" color="light-blue-accent-4" clearable
+                            :error-messages="showFieldsErrors('id_role')">
+                            <template v-slot:item="{ props, item }">
+                                <v-list-item v-bind="props" :title="item.raw.text"></v-list-item>
+                            </template>
+                        </v-autocomplete>
                     </v-col>
 
                     <v-col cols="12">
@@ -33,16 +37,14 @@
 
                     <v-col cols="12">
                         <v-text-field label="Buscar Personal" color="light-blue-accent-4" @keyup.enter="searchPersonal()"
-                            prepend-inner-icon="mdi-magnify" placeholder="Escriba el CI del personal (Solo numero)."
+                            prepend-inner-icon="mdi-magnify" placeholder="C.I. del personal (Solo numero)."
                             v-model="ci" :loading="change_search_personal">
                             <template v-slot:append>
                                 <v-btn icon="mdi-magnify" color="orange-darken-3" @click="searchPersonal"
                                     variant="elevated" />
                             </template>
                         </v-text-field>
-
                     </v-col>
-
                 </v-row>
             </v-form>
         </v-card-text>
@@ -56,26 +58,37 @@
                 <v-icon icon="mdi-content-save"></v-icon>&nbsp;Guardar
             </v-btn>
         </v-card-actions>
+        <v-overlay v-model="loading_list_role" class="d-flex align-center justify-center" contained persistent>
+            <div class="text-center">
+                <v-progress-circular color="light-blue-accent-4" indeterminate size="100"></v-progress-circular>
+                <p class="text-h6 text-white">Cargando modulos necesarios...</p>
+            </div>
+        </v-overlay>
 
     </v-card>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, computed, watch } from 'vue';
-import useToastify from '@/composables/useToastify';
+import { ref, defineProps, defineEmits, computed, watch, onMounted } from 'vue';
+import toastify from '@/composables/toastify';
 import Personal from '@/http/services/Personal';
 import Usuario from '@/http/services/Usuario';
+import Role from '@/http/services/Role';
 
 const props = defineProps(['is_item_usuario', 'is_ciudad']);
-const emit = defineEmits(['toLocalUpdateDataTable', 'toNewForm']);
+const emit = defineEmits(['toLocalUpdateDataIterator', 'toNewForm']);
 const fields_errors = ref({});
 const item_usuario = ref(props.is_item_usuario);
 const loading_btn = ref(false);
 const src_image = ref("");
 const change_search_personal = ref(false);
 const ci = ref("");
-const show = ref(false);
+const show_password = ref(false);
+const list_role = ref([]);
+const loading_list_role = ref(false);
 
+//cuando se ejecuta toNewForm en el componente padre
+//entonces los valores de is_item_usuario cambian y debemos actualizar esos mismos valores aca 
 watch(() => props.is_item_usuario, () => {
     item_usuario.value = props.is_item_usuario;
     fields_errors.value = {};
@@ -104,6 +117,24 @@ const clear = () => {
     emit('toNewForm');
 }
 
+const initListRole = () => {
+    loading_list_role.value = true;
+    setTimeout(async () => {
+        const role = new Role();
+        const response = await role.list();
+        loading_list_role.value = false;
+        if (response.status) {
+            const list = response.records;
+            list_role.value = list.map(item => ({
+                text: item.rol_name,
+                id: item.id
+            }));
+        } else {
+            toastify('danger', response.message);
+        }
+    }, 200);
+}
+
 const save = () => {
     loading_btn.value = true;
     setTimeout(async () => {
@@ -113,28 +144,30 @@ const save = () => {
             const response = await usuario.update();
             loading_btn.value = false;
             if (response.status) {
-                useToastify('success', response.message);
-                emit('toLocalUpdateDataTable', 'edit', response.record)
+                toastify('success', response.message);
+                emit('toLocalUpdateDataIterator', 'edit', response.record)
+                emit('toNewForm');
                 clear();
             } else {
-                if (response.message_errors != undefined) {
-                    fields_errors.value = Object.assign({}, response.message_errors);
+                if (response.validation_errors != undefined) {
+                    fields_errors.value = Object.assign({}, response.validation_errors);
                 }
-                useToastify('danger', response.message);
+                toastify('danger', response.message);
             }
         } else {
             //cuando es store o nuevo registro
             const response = await usuario.store();
             loading_btn.value = false;
             if (response.status) {
-                useToastify('success', response.message);
-                emit('toLocalUpdateDataTable', 'new', response.record);
+                toastify('success', response.message);
+                emit('toLocalUpdateDataIterator', 'new', response.record);
+                emit('toNewForm');
                 clear();
             } else {
-                if (response.message_errors != undefined) {
-                    fields_errors.value = Object.assign({}, response.message_errors);
+                if (response.validation_errors != undefined) {
+                    fields_errors.value = Object.assign({}, response.validation_errors);
                 }
-                useToastify('danger', response.message);
+                toastify('danger', response.message);
             }
         }
     }, 200);
@@ -151,11 +184,15 @@ const searchPersonal = () => {
             item_usuario.value.apellido_paterno = response.record.apellido_paterno;
             item_usuario.value.apellido_materno = response.record.apellido_materno;
             item_usuario.value.id_personal = response.record.id;
-            useToastify('success', response.message);
+            toastify('success', response.message);
         } else {
-            useToastify('danger', response.message);
+            toastify('danger', response.message);
         }
         ci.value = "";
     }, 200);
 }
+
+onMounted(() => {
+    initListRole();
+});
 </script> 

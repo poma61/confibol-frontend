@@ -5,6 +5,7 @@ import { middleware } from '@/http/middleware/middleware';
 import authExpiration from '@/http/middleware/authExpiration';
 import redirectIfAuthenticated from '@/http/middleware/redirectIfAuthenticated';
 import authenticate from '@/http/middleware/authenticate';
+import checkRole from '@/http/middleware/checkRole';
 import ProfileView from '@/views/ProfileView.vue';
 import NotFound from '@/views/NotFound.vue';
 
@@ -26,14 +27,6 @@ const routes = [
     path: '/',
     name: 'n-login',
     component: LoginView,
-    meta: {
-      requireAuth: false
-    },
-    beforeEnter: [
-      middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
-      middleware(authenticate),
-    ]
   },
 
   {
@@ -75,6 +68,7 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 
@@ -89,6 +83,7 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 
@@ -103,6 +98,7 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 
@@ -117,6 +113,7 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 
@@ -131,6 +128,7 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 
@@ -145,6 +143,7 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 
@@ -159,6 +158,23 @@ const routes = [
       middleware(authExpiration),
       middleware(redirectIfAuthenticated),
       middleware(authenticate),
+      middleware(checkRole, ['administrador'])
+    ],
+  },
+
+
+  {
+    path: '/usuario/:ciudad',
+    name: 'n-usuario',
+    component: () => import(/* webpackChunkName: "UsuarioView" */'@/views/UsuarioView.vue'),
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: [
+      middleware(authExpiration),
+      middleware(redirectIfAuthenticated),
+      middleware(authenticate),
+      middleware(checkRole, ['administrador'])
     ],
   },
 

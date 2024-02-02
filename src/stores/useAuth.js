@@ -7,6 +7,8 @@ export const useAuth = defineStore('idUseAuth', () => {
         state: false,
         access_token: "",
         time_expiration_token: 0,
+        type_token: "",
+        role: ""
     });
 
     const init = () => {
@@ -20,6 +22,9 @@ export const useAuth = defineStore('idUseAuth', () => {
         auth.value.state = is_auth.state;
         auth.value.access_token = is_auth.access_token;
         auth.value.time_expiration_token = is_auth.time_expiration_token;
+        auth.value.type_token = is_auth.type_token;
+        auth.value.role = is_auth.role;
+
         localStorage.setItem('sessionAuth', JSON.stringify(auth.value));
     }
 
@@ -37,8 +42,10 @@ export const useAuth = defineStore('idUseAuth', () => {
             if (resolve.data.status == true) {
                 setAuth({
                     state: true,
-                    access_token: resolve.data.access_token,
-                    time_expiration_token: Date.now() + Number(resolve.data.expires_in * 60) * 1000,//convertimos de minutos, segundos a milisegundos 
+                    access_token: resolve.data.session_auth.access_token,
+                    time_expiration_token: Date.now() + Number(resolve.data.session_auth.time_expiration_token * 60) * 1000,//convertimos de minutos, segundos a milisegundos
+                    type_token: resolve.data.session_auth.type_token,
+                    role: resolve.data.session_auth.role,
                 })
             }
 
@@ -57,13 +64,10 @@ export const useAuth = defineStore('idUseAuth', () => {
         }
     }
 
-    const hasRole = async () => {
-        try {
-            const resolve = await axios.post("/auth/verify-role");
-            return resolve.data;
-        } catch (error) {
-            return error.response.data;
-        }
+    const hasRole = (roles) => {
+        // Verifica si el valor de getAuth().role se encuentra en el array roles
+        //devuelve true si el valor getAuth().role esta en el array roles;
+        return roles.includes(getAuth().role);
     }
 
     const updateCredentials = async (credentials) => {
@@ -86,6 +90,8 @@ export const useAuth = defineStore('idUseAuth', () => {
                     state: false,
                     access_token: "",
                     time_expiration_token: 0,
+                    type_token: "",
+                    role: ""
                 });
             }
             return response.data;
@@ -101,6 +107,8 @@ export const useAuth = defineStore('idUseAuth', () => {
                 state: false,
                 access_token: "",
                 time_expiration_token: 0,
+                type_token: "",
+                role: ""
             });
         }
     }

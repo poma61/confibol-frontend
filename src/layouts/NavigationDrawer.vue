@@ -9,7 +9,7 @@
 
             <v-list density="compact" nav>
                 <div class="d-flex flex-column justify-center align-center my-2">
-                    <v-avatar :image="app.BASE_URL + user.foto" size="80"></v-avatar>
+                    <v-avatar :image="app.BASE_URL + user.foto_image_path" size="80"></v-avatar>
                     <p class="text-subtitle-1">{{ `${user.nombres} ${user.apellido_paterno} ${user.apellido_materno}` }}</p>
                 </div>
 
@@ -47,8 +47,9 @@
                     :to="{ name: 'n-personal', params: { ciudad: 'la-paz' } }"
                     :class="{ 'v-list-item--active': route.name == 'n-personal' }" />
 
-                <v-list-item prepend-icon="mdi-account-circle-outline" title="Usuarios" value="Usuarios" />
-
+                <v-list-item prepend-icon="mdi-account-circle-outline" title="Usuarios" value="Usuarios"
+                    :to="{ name: 'n-usuario', params: { ciudad: 'la-paz' } }"
+                    :class="{ 'v-list-item--active': route.name == 'n-usuario' }" />
             </v-list>
         </v-navigation-drawer>
 

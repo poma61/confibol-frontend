@@ -93,12 +93,10 @@ const login = () => {
 
 /* Para dispositivos con un ancho de pantalla máximo de 600px */
 @media only screen and (max-width: 600px) {
-
     /*  estilos para la imagen */
     .as-card-item:nth-child(1) {
         height: 300px;
         width: 300px;
     }
-
 }
 </style>

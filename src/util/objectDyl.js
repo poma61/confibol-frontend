@@ -3,7 +3,6 @@ export const emptyObject = (__object) => {
      return Object.keys(__object).length == 0;
 }
 
-
 export const assignObjectExists = (__old_object, __add_object) => {
      return Object.assign(__old_object, __add_object);
 }
@@ -33,3 +32,4 @@ export const objectPropertyWithValue = (__object) => {
      }
      return false;
 }
+

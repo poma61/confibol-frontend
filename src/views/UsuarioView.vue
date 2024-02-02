@@ -3,10 +3,10 @@
 <template>
     <MainApp>
         <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-cyan-darken-1 as-box-shadow">
-            <v-icon icon="mdi-home-account "></v-icon>&nbsp;Personal
+            <v-icon icon="mdi-account-circle-outline"></v-icon>&nbsp;Usuario
         </h1>
         <v-card class="animate__animated animate__bounceInLeft mt-5" elevation="20">
-            <v-tabs bg-color="indigo-lighten-1" stacked show-arrows color="indigo-lighten-4">
+            <v-tabs bg-color="cyan-darken-1" stacked show-arrows color="cyan-lighten-4">
                 <v-tab :to="{ name: 'n-usuario', params: { ciudad: 'la-paz' } }">
                     <v-icon icon="mdi-numeric-1-circle-outline" />
                     La Paz
@@ -70,13 +70,13 @@ const route = useRoute();
 watch(() => route.params.ciudad, async (new_ciudad, old_ciudad) => {
     componentUsuario.value.witchParamsRoute(route.params.ciudad);
     //componentUsuario.value.handleComponent('data-table');
-    await componentUsuario.value.changeDataTable();
+    await componentUsuario.value.changeDataIterator();
 });
 
 onMounted(async () => {
     componentUsuario.value.witchParamsRoute(route.params.ciudad);
     // componentUsuario.value.handleComponent('data-table');
-    await componentUsuario.value.changeDataTable();
+    await componentUsuario.value.changeDataIterator();
 });
 </script>
 

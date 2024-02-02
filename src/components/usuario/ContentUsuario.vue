@@ -1,9 +1,9 @@
 <template>
-    <div class="as-flex">
+    <div class="mt-3 as-flex">
         <!-- iterator -->
-        <v-card class="as-flex-item as-data-iterator-2 animate__animated animate__zoomIn">
+        <v-card class="as-flex-item as-container-data-iterator animate__animated animate__zoomIn">
             <v-overlay v-model="loading_data_iterator" contained class="d-flex align-center justify-center">
-                <v-progress-circular color="teal-accent-4" indeterminate size="64"></v-progress-circular>
+                <v-progress-circular color="teal-accent-4" indeterminate size="100"></v-progress-circular>
             </v-overlay>
 
             <v-data-iterator :items="data" :items-per-page="6" :search="search_item"
@@ -42,14 +42,14 @@
 
                 <template v-slot:default="{ items }">
                     <div>
-                        <v-container class="as-data-iterator-content-2" fluid>
+                        <v-container class="as__data-iterator" fluid>
                             <v-row justify="center">
                                 <v-col v-for="(item, index) in items" :key="index" cols="auto" md="4">
 
                                     <v-card class="pa-3" variant="tonal" min-height="200px">
                                         <!-- sdf -->
                                         <v-sheet>
-                                            <v-img :src="app.BASE_URL + item.raw.foto" height="150" />
+                                            <v-img :src="app.BASE_URL + item.raw.foto_image_path" height="150" />
                                             <div class="d-flex flex-column">
                                                 <h2 class="text-h6">{{ item.raw.nombres }} {{ item.raw.apellido_paterno }}
                                                     {{ item.raw.apellido_materno }}</h2>
@@ -89,8 +89,8 @@
                 </template>
 
             </v-data-iterator>
-            <div class="as-data-iterator-content d-flex justify-center align-center" v-if="data.length == 0">
-                <h1 class="text-h6 text-red">No hay datos.</h1>
+            <div class="as__data-iterator d-flex justify-center align-center" v-if="data.length == 0" >
+                <p>No hay datos disponibles.</p>
             </div>
             <div class="float-end">
                 <v-btn color="teal-accent-4 " variant="elevated" class="ma-1" @click="changeDataIterator">
@@ -100,8 +100,8 @@
         </v-card>
         <!-- iterator -->
 
-        <FormUsuario :is_item_usuario="item_usuario" :is_ciudad="ciudad" @toLocalUpdateDataTable="localUpdateDataTable"
-            @toNewForm="newForm" />
+        <FormUsuario :is_item_usuario="item_usuario" :is_ciudad="ciudad"
+            @toLocalUpdateDataIterator="localUpdateDataIterator" @toNewForm="newForm" />
 
         <v-dialog v-model="dialog_delete" persistent transition="dialog-bottom-transition" max-width="500px">
             <v-card class="px-5 py-5">
@@ -114,10 +114,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <div class="d-flex justify-center" style="width: 100%;">
-                        <v-btn color="red" variant="outlined" @click="closeDeleteItem" class="ma-1">
+                        <v-btn color="red" variant="elevated" @click="closeDeleteItem" class="ma-1">
                             <v-icon icon="mdi-cancel"></v-icon>&nbsp;Cancelar
                         </v-btn>
-                        <v-btn color="light-blue-accent-4" variant="outlined" class="ma-1" @click="confirmDeleteItem">
+                        <v-btn color="light-blue-accent-4" variant="elevated" class="ma-1" @click="confirmDeleteItem">
                             <v-icon icon="mdi-check-circle"></v-icon>&nbsp;Si
                         </v-btn>
                     </div>
@@ -134,6 +134,7 @@ import Usuario from '@/http/services/Usuario';
 import toastify from '@/composables/toastify';
 import FormUsuario from '@/components/usuario/FormUsuario.vue';
 import app from '@/config/app';
+import { assignObjectExists, assignObjectNew } from '@/util/objectDyl';
 
 const loading_data_iterator = ref(false);
 const data = ref([]);
@@ -166,7 +167,8 @@ const clear = () => {
 const openDeleteItem = (item) => {
     index_item.value = data.value.indexOf(item);
     //solo pasamos el id porque si nos se muestra en el formulario los datos
-    item_usuario.value = Object.assign({ id: item.id });
+    // y visualmente no se visualiza bien 
+    item_usuario.value = assignObjectNew({ id: item.id });
     dialog_delete.value = true;
 }
 
@@ -177,7 +179,7 @@ const closeDeleteItem = () => {
 
 const confirmDeleteItem = async () => {
     const usuario = new Usuario();
-    usuario.setAttributes(Object.assign({}, item_usuario.value));
+    usuario.setAttributes(assignObjectNew(item_usuario.value));
     const response = await usuario.destroy();
     if (response.status) {
         data.value.splice(index_item.value, 1);
@@ -191,27 +193,26 @@ const confirmDeleteItem = async () => {
 const newForm = () => {
     clear();
     const usuario = new Usuario();
-    item_usuario.value = Object.assign({}, usuario.getAttributes());
+    item_usuario.value = assignObjectNew(usuario.getAttributes());
 }
 
 const editForm = (item) => {
-    item_usuario.value = Object.assign({}, item);
+    item_usuario.value = assignObjectNew(item);
     index_item.value = data.value.indexOf(item);
 }
 
-const localUpdateDataTable = (type, item) => {
+const localUpdateDataIterator = (type, item) => {
     switch (type) {
         case 'new':
-            data.value.push(Object.assign({}, item));
+            data.value.push(assignObjectNew(item));
             break;
         case 'edit':
-            Object.assign(data.value[index_item.value], item);
+            assignObjectExists(data.value[index_item.value], item);
             break;
         default:
             toastify('danger', 'No se puede reconocer la accion al registrar.');
             break;
     }
-    newForm();
 }
 const witchParamsRoute = (item) => {
     ciudad.value = item;
@@ -225,3 +226,35 @@ defineExpose({
 </script>
 
 
+<style scoped>
+.as-flex {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.as-flex .as-flex-item {
+    flex-grow: 1;
+    width: 500px;
+}
+
+
+.as-container-data-iterator {
+    height: 730px;
+}
+
+.as__data-iterator {
+    overflow: hidden;
+    overflow-y: auto;
+    height: 600px;
+    border-top: 1px solid #c2c2c2;
+    border-bottom: 1px solid #c2c2c2;
+}
+
+@media only screen and (max-width: 500px) {
+    .as-container-data-iterator {
+        height: 760px;
+    }
+}
+</style>

@@ -6,13 +6,13 @@ class Usuario extends Service {
         super();
         //esta parte podriamos enviar en un objeto anidado o en objeto plano
         this.setFillable({
-            //usuario
+            //usuarios
             id: 0,
             user: "",
             password: "",
             id_personal: "",
-            //usuario_has_role
-            id_rol: null,
+            //usuarios_has_roles
+            id_role: null,
         });
 
         this.setApi({
