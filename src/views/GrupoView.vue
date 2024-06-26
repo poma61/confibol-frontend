@@ -62,17 +62,29 @@
 <script setup>
 import MainApp from '@/layouts/MainApp.vue';
 import ContentGrupo from '@/components/grupo/ContentGrupo.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router'
 const componentGrupo = ref(null)
 const route = useRoute();
 
+// Función para asegurar que Todos los componentes DOM se hayan renderizado
+const ensureDOMRendered =async () => {
+  return new Promise((resolve) => {
+    nextTick(() => {
+      resolve();
+    });
+  });
+};
+
+
 watch(() => route.params.ciudad, async (new_ciudad, old_ciudad) => {
+    await ensureDOMRendered();
     componentGrupo.value.witchParamsRoute(new_ciudad);
     await componentGrupo.value.loadDataTable();
 });
 
 onMounted(async () => {
+    await ensureDOMRendered();
     componentGrupo.value.witchParamsRoute(route.params.ciudad);
     await componentGrupo.value.loadDataTable();
 });

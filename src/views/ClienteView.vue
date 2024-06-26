@@ -62,17 +62,29 @@
 <script setup>
 import MainApp from '@/layouts/MainApp.vue';
 import ContentCliente from '@/components/cliente/ContentCliente.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router'
 const componentCliente = ref(null)
 const route = useRoute();
 
+// Función para asegurar que Todos los componentes DOM se hayan renderizado
+const ensureDOMRendered =async () => {
+  return new Promise((resolve) => {
+    nextTick(() => {
+      resolve();
+    });
+  });
+};
+
+
 watch(() => route.params.ciudad, async (new_ciudad) => {
+    await ensureDOMRendered();
     componentCliente.value.witchParamsRoute(new_ciudad);
     await componentCliente.value.loadDataTable();
 });
 
 onMounted(async () => {
+    await ensureDOMRendered();
     componentCliente.value.witchParamsRoute(route.params.ciudad);
     await componentCliente.value.loadDataTable();
 });

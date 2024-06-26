@@ -63,7 +63,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import AppBar from '@/layouts/AppBar.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useAuth } from '@/stores/useAuth';
 import toastify from '@/composables/toastify';
 import app from '@/config/app';
@@ -95,7 +95,7 @@ const auth = async () => {
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
     auth();
 });
 </script>

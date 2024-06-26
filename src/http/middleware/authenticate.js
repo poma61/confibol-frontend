@@ -10,6 +10,7 @@ const authenticate = (to, from, next) => {
         if (use_auth.getAuth().state) {
             next();
         } else {
+            //si no esta autenticado redirecciona
             next({ name: LOGIN });
         }
 

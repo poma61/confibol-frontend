@@ -2,7 +2,7 @@
     <div class="mt-3 as-flex">
         <!-- iterator -->
         <v-card class="as-flex-item as-container-data-iterator animate__animated animate__zoomIn">
-            <v-overlay v-model="loading_data_iterator" contained class="d-flex align-center justify-center">
+            <v-overlay v-model="loading_data_iterator"  class="align-center justify-center">
                 <v-progress-circular color="teal-accent-4" indeterminate size="100"></v-progress-circular>
             </v-overlay>
 

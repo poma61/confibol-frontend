@@ -1,4 +1,5 @@
 <template>
+
     <div class="d-flex">
         <div class="d-flex flex-column animate__animated animate__bounceInLeft">
             <v-tooltip text="Actualizar tablero">
@@ -22,17 +23,19 @@
         </div>
 
         <div class="flex-grow-1">
-
             <!-- iterator -->
-            <v-card v-if="component_show.data_iterator" class="as-container-data-iterator animate__animated animate__zoomIn"
-                elevation="20">
-                <v-overlay v-model="loading_data_iterator" contained class="d-flex align-center justify-center" persistent>
-                    <div class="text-center">
-                        <v-progress-circular color="light-blue-accent-4" indeterminate size="100"></v-progress-circular>
-                        <p class="text-white text-h6">Cargando datos...</p>
-                    </div>
-                </v-overlay>
+            <v-card v-if="component_show.data_iterator"
+                class="as-container-data-iterator animate__animated animate__zoomIn" elevation="20">
 
+       
+                    <v-overlay v-model="loading_data_iterator" class="align-center justify-center" persistent >
+                        <div class="text-center">
+                            <v-progress-circular color="light-blue-accent-4" indeterminate
+                                size="100"></v-progress-circular>
+                            <p class="text-white text-h6">Cargando datos...</p>
+                        </div>
+                    </v-overlay>
+        
                 <v-data-iterator :items="data" :items-per-page="16" :search="search_item"
                     :sort-by="[{ key: 'id', order: 'desc' }]">
 
@@ -84,8 +87,8 @@
 
                                                     <v-tooltip text="Eliminar registro.">
                                                         <template v-slot:activator="{ props }">
-                                                            <v-btn v-bind="props" size="small" icon="mdi-delete" color="red"
-                                                                variant="elevated" class="ma-1"
+                                                            <v-btn v-bind="props" size="small" icon="mdi-delete"
+                                                                color="red" variant="elevated" class="ma-1"
                                                                 @click="openDeleteItem(item.raw)" />
                                                         </template>
                                                     </v-tooltip>
@@ -124,8 +127,6 @@
         </div>
 
     </div>
-
-
     <v-dialog v-model="dialog_delete" persistent max-width="500px">
         <v-card class="px-5 py-5 animate__animated animate__bounceInDown">
             <v-card-text class="text-center">
@@ -147,8 +148,9 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+
 </template>
-  
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import Producto from '@/http/services/Producto';
@@ -156,6 +158,8 @@ import toastify from '@/composables/toastify';
 import FormProducto from '@/components/producto/FormProducto.vue';
 import app from '@/config/app';
 import { assignObjectExists, assignObjectNew } from '@/util/objectDyl';
+
+const activator = ref(null);
 
 const loading_data_iterator = ref(false);
 const data = ref([]);
@@ -168,7 +172,7 @@ const component_show = ref({
     form: false,
 });
 
-const loadDataIterator = () => {
+const loadDataIterator = async () => {
     loading_data_iterator.value = true;
     setTimeout(async () => {
         const producto = new Producto();
@@ -264,7 +268,7 @@ onMounted(async () => {
 
 </script>
 
-<style  scoped>
+<style scoped>
 /* ========================================
 data iterator 
 el valor height de as-container-data-iterator es +130 o +100 sobre el valor height de as__data-iterator

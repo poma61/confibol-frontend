@@ -62,19 +62,34 @@
 <script setup>
 import MainApp from '@/layouts/MainApp.vue';
 import ContentPerasonal from '@/components/personal/ContentPersonal.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router'
 const componentPersonal = ref(null)
 const route = useRoute();
 
+// Función para asegurar que Todos los componentes DOM se hayan renderizado
+const ensureDOMRendered =async () => {
+  return new Promise((resolve) => {
+    nextTick(() => {
+      resolve();
+    });
+  });
+};
+
+
+
 watch(() => route.params.ciudad, async (new_ciudad, old_ciudad) => {
-    componentPersonal.value.witchParamsRoute(route.params.ciudad);
+    await ensureDOMRendered();
+    componentPersonal.value.witchParamsRoute(new_ciudad);
     componentPersonal.value.handleComponent('data-table');
     await componentPersonal.value.changeDataTable();
 });
 
 onMounted(async () => {
+    await ensureDOMRendered();
+
     componentPersonal.value.witchParamsRoute(route.params.ciudad);
+
     componentPersonal.value.handleComponent('data-table');
     await componentPersonal.value.changeDataTable();
 });

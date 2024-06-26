@@ -58,13 +58,13 @@
                 <v-icon icon="mdi-content-save"></v-icon>&nbsp;Guardar
             </v-btn>
         </v-card-actions>
-        <v-overlay v-model="loading_list_role" class="d-flex align-center justify-center" contained persistent>
+        <!-- <v-overlay v-model="loading_list_role" class="d-flex align-center contained justify-center"  persistent>
             <div class="text-center">
                 <v-progress-circular color="light-blue-accent-4" indeterminate size="100"></v-progress-circular>
                 <p class="text-h6 text-white">Cargando modulos necesarios...</p>
             </div>
-        </v-overlay>
-
+        </v-overlay> -->
+        <!--  el voverlay con la propiedad contained esta teniendo problemas por esa razon vamos a comentar este codigo-->
     </v-card>
 </template>
 

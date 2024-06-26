@@ -1,5 +1,3 @@
-
-
 <template>
     <MainApp>
         <h1 class="animate__animated animate__bounceInLeft text-h6 my-3 pa-1 bg-cyan-darken-1 as-box-shadow">
@@ -62,21 +60,34 @@
 <script setup>
 import MainApp from '@/layouts/MainApp.vue';
 import ContentUsuario from '@/components/usuario/ContentUsuario.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router'
 const componentUsuario = ref(null)
 const route = useRoute();
 
+// Función para asegurar que Todos los componentes DOM se hayan renderizado
+const ensureDOMRendered = async () => {
+    return new Promise((resolve) => {
+        nextTick(() => {
+            resolve();
+        });
+    });
+};
+
+
 watch(() => route.params.ciudad, async (new_ciudad, old_ciudad) => {
-    componentUsuario.value.witchParamsRoute(route.params.ciudad);
+    await ensureDOMRendered();
+    componentUsuario.value.witchParamsRoute(new_ciudad);
     //componentUsuario.value.handleComponent('data-table');
     await componentUsuario.value.changeDataIterator();
 });
 
 onMounted(async () => {
+    await ensureDOMRendered();
     componentUsuario.value.witchParamsRoute(route.params.ciudad);
     // componentUsuario.value.handleComponent('data-table');
     await componentUsuario.value.changeDataIterator();
+
 });
 </script>
 

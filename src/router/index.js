@@ -18,7 +18,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
     ]
   },
@@ -27,6 +26,9 @@ const routes = [
     path: '/',
     name: 'n-login',
     component: LoginView,
+    beforeEnter: [
+      middleware(redirectIfAuthenticated),
+    ],
   },
 
   {
@@ -38,7 +40,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
     ],
   },
@@ -52,7 +53,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
     ]
   },
@@ -66,7 +66,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -81,7 +80,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -96,7 +94,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -111,7 +108,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -126,7 +122,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -141,7 +136,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -156,7 +150,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
@@ -172,7 +165,6 @@ const routes = [
     },
     beforeEnter: [
       middleware(authExpiration),
-      middleware(redirectIfAuthenticated),
       middleware(authenticate),
       middleware(checkRole, ['administrador'])
     ],
