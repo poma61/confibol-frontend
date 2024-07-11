@@ -9,8 +9,12 @@ import 'animate.css';
 import { createPinia } from 'pinia';
 //estilos
 import '@/assets/css/style.css';
+
 //import '@/assets/css/normalize.css';
 import 'mosha-vue-toastify/dist/style.css';
+
+import './registerServiceWorker'
+
 
 const pinia = createPinia();
 
